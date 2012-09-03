@@ -42,22 +42,20 @@ class RedditPost:
         pp = (25 / ago) * postscore / self.ref_score
         return pp
 
-
-
-
 class RedditLoader:
     last_req_time = 0
     opener = urllib.FancyURLopener()
 
     @classmethod
     def load_json_from_url(cls, url):
-        print 'requesting url ' , url
-        urllib.FancyURLopener.version = "u/afterbirth personal bot for news aggregation2352456"
+        urllib.FancyURLopener.version = "u/afterbirth personal bot for news aggregation2"
         time_elapsed_since_last_req = time.time() - cls.last_req_time
-        if (time_elapsed_since_last_req < 2):
-            print 'sleeping for ' , 10 - time_elapsed_since_last_req
-            time.sleep(10 - time_elapsed_since_last_req)
+        time_required = 30
+        if (time_elapsed_since_last_req < time_required):
+            print 'sleeping for ' , time_required - time_elapsed_since_last_req
+            time.sleep(time_required - time_elapsed_since_last_req)
         cls.last_req_time = time.time()
+        print 'requesting url ' , url
         return json.load(cls.opener.open(url))['data']['children']
 
     @classmethod
@@ -70,14 +68,10 @@ class RedditLoader:
              posts += cls.load_json_from_url(url + '&after=' + last_post_id)
         return posts[:post_no]
 
-
 def main():
 
     value = ""
-    output = ""
-    subreddits = ['philosophy', 'cogsci']
-
-
+    subreddits = ['philosophy', 'cogsci', 'minimalism', 'webdev', 'windows', 'linux', 'videos', 'funny', 'wtf', 'aww', 'atheism']
 
     for subreddit in subreddits:
 
@@ -100,20 +94,7 @@ def main():
             value += u'{} - {}'.format(item.title, item.url).encode('utf-8')
             value += "\n"
 
-
-        # print '1 ', time.ctime()  
-        # print '2 ', time.ctime(time.mktime(time.gmtime()))  # ZLE POKAZUJE GMT TIME (+1 ZAMIAST +2)      
-        # print '3 ', time.time() - time.mktime(time.gmtime())
-
         print RedditPost.ref_score
-        output += "subreddit: %r" % subreddit
-        output += "\n"
-        output += value
-            
-        #print output
-
 
 if __name__ == "__main__":
     main()
-
-#test commit 2
