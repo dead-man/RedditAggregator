@@ -3,8 +3,6 @@ import json
 import urllib
 import time
 
-
-
 class RedditPost:
 
     ref_score = 0
@@ -117,3 +115,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+#test commit 2
