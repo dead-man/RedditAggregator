@@ -3,6 +3,10 @@ import json
 import urllib
 import time
 
+
+class RedditOpener(urllib.FancyURLopener):
+    version = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11'
+
 class RedditPost:
 
     ref_score = 0
@@ -44,13 +48,12 @@ class RedditPost:
 
 class RedditLoader:
     last_req_time = 0
-    opener = urllib.FancyURLopener()
+    opener = RedditOpener()
 
     @classmethod
     def load_json_from_url(cls, url):
-        urllib.FancyURLopener.version = "u/afterbirth personal bot for news aggregation2"
         time_elapsed_since_last_req = time.time() - cls.last_req_time
-        time_required = 30
+        time_required = 3
         if (time_elapsed_since_last_req < time_required):
             print 'sleeping for ' , time_required - time_elapsed_since_last_req
             time.sleep(time_required - time_elapsed_since_last_req)
