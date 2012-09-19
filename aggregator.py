@@ -1,12 +1,22 @@
 
 import json
-import urllib
+import urllib2
 import time
 
 import sys # just for testing
 
-class RedditOpener(urllib.FancyURLopener):
-    version = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11'
+class RedditOpener:
+    def __init__(self):
+        self.user_agent = 'PrivateRedditAggregatorBot/1.0'
+        self.user_agent = 'my_cool_application r43wrew PRAW/1.0.6 Python/2.7.3 Windows-7-6.1.7601-SP1'
+        self.opener = urllib2.build_opener()
+        self.opener.addheaders = [('User-agent', self.user_agent)]
+
+    def open(self, url):
+        try:
+            return self.opener.open(url)
+        except urllib2.HTTPError as error:
+            return error
 
 class RedditPost:
 
