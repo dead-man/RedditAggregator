@@ -8,8 +8,8 @@ import sys # just for testing
 class RedditOpener:
     def __init__(self):
         self.user_agent = 'PrivateRedditAggregatorBot/1.0'
-        self.user_agent = 'my_cool_application r43wrew PRAW/1.0.6 Python/2.7.3 Windows-7-6.1.7601-SP1'
         self.opener = urllib2.build_opener()
+        self.opener.add_handler(urllib2.HTTPCookieProcessor())
         self.opener.addheaders = [('User-agent', self.user_agent)]
 
     def open(self, url):
@@ -73,8 +73,8 @@ class RedditLoader:
             time.sleep(time_required - time_elapsed_since_last_req)
         #cls.last_req_time = time.time()
         print 'requesting url ' , url
-        response = cls.opener.open(url)
         cls.last_req_time = time.time()
+        response = cls.opener.open(url)
         print 'site responded with HTTP code: ', response.getcode()
 
         json_message = response.read()
