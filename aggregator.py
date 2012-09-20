@@ -2,7 +2,11 @@
 import json
 import urllib2
 import time
-
+import smtplib
+from email.MIMEMultipart import MIMEMultipart
+from email.MIMEBase import MIMEBase
+from email.MIMEText import MIMEText
+import datetime
 import sys # just for testing
 
 class RedditOpener:
@@ -140,19 +144,34 @@ class RedditLoader:
         return output_list
 
 
+def mail(to, subject, text, gmail_user, gmail_pwd):
+   msg = MIMEMultipart()
+   msg['From'] = gmail_user
+   msg['To'] = to
+   msg['Subject'] = subject
+   msg.attach(MIMEText(text))
+   mailServer = smtplib.SMTP("smtp.gmail.com", 587)
+   mailServer.ehlo()
+   mailServer.starttls()
+   mailServer.ehlo()
+   mailServer.login(gmail_user, gmail_pwd)
+   mailServer.sendmail(gmail_user, to, msg.as_string())
+   mailServer.close()
 
 def main():
-
-    
     subreddits = ['philosophy', 'cogsci', 'minimalism', 'webdev', 'windows', 'linux', 'videos', 'funny', 'wtf', 'aww', 'atheism',
         'science', 'technology', 'neuro', 'psychology', 'minimalism', 'CultCinema']
-
-    subreddits = ['philosophy', 'cogsci', 'minimalism', 'webdev', 'windows', 'linux', 'videos']
+    subreddits = ['philosophy', 'cogsci', 'minimalism']
 
     value = RedditLoader.aggregate_subreddits(subreddits)
 
-    print json.dumps(value, indent = 4)
+    gmail_user = "raggregator@gmail.com"
+    gmail_pwd = "secret"
+    mail_to = "xelnyq@gmail.com"
+    subject = "Reddit Aggregator's news for %r" % datetime.datetime.now().strftime("%d-%m-%Y")
+    text = json.dumps(value, indent = 4)
 
+    mail(mail_to, subject, text, gmail_user, gmail_pwd)
    
 
 if __name__ == "__main__":
