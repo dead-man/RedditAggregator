@@ -67,26 +67,35 @@ class RedditLoader:
     last_req_time = 0
     retries = 0
     opener = RedditOpener()
+    reddit_cache = {}
 
     @classmethod
-    def load_json_from_url(cls, url, delay = 2):
+    def load_json_from_url(cls, url, delay = 2, cache_refresh_interval = 300):
+
+        if url in cls.reddit_cache and time.time() - cls.reddit_cache[url]['last_refresh'] < cache_refresh_interval:
+            print 'url ' + url + ' arleady in cache, NOT REQUESTING'
+            return cls.reddit_cache[url]['posts']
+
         time_elapsed_since_last_req = time.time() - cls.last_req_time
         time_required = delay
         if (time_elapsed_since_last_req < time_required):
-            print 'sleeping for ' , time_required - time_elapsed_since_last_req
+            #print 'sleeping for ' , time_required - time_elapsed_since_last_req
             time.sleep(time_required - time_elapsed_since_last_req)
-        #cls.last_req_time = time.time()
         print 'requesting url ' , url
         cls.last_req_time = time.time()
         response = cls.opener.open(url)
         print 'site responded with HTTP code: ', response.getcode()
 
         json_message = response.read()
-        print '...and message: ', json_message
+        #print '...and message: ', json_message
         json_dct = json.loads(json_message)
 
         if 'data' in json_dct and 'children' in json_dct['data']:
             cls.retries = 0
+            if url not in cls.reddit_cache: 
+                cls.reddit_cache[url] = {}
+            cls.reddit_cache[url]['last_refresh'] = time.time()
+            cls.reddit_cache[url]['posts'] = json_dct['data']['children']
             return json_dct['data']['children']
         elif cls.retries >= 20:
             print ' retries no exceeded... exiting'
@@ -118,7 +127,8 @@ class RedditLoader:
             return RedditPost.load_posts(posts[:post_no])
 
     @classmethod
-    def aggregate_subreddits(cls, reddit_list, ref_cat = 'top/', ref_t = '?t=month', posts_per_sub = 25 , time_frame = 90000, pp_treshold = 0.5):
+    def aggregate_subreddits(cls, reddit_list, ref_cat = 'top/', ref_t = '?t=month', posts_per_sub = 25 , 
+        time_frame = 90000, pp_treshold = 0.5):
 
         output_list = []
 
@@ -129,7 +139,7 @@ class RedditLoader:
             top_posts = RedditLoader.load_subreddit(subreddit, ref_cat, ref_t)
             RedditPost.calculate_ref_score(top_posts)
 
-            posts = RedditLoader.load_subreddit(subreddit)
+            posts = RedditLoader.load_subreddit(subreddit, post_no = posts_per_sub)
             
             for item in posts:
                 #TODO sprawdzic zwracane czasy (time() nie zwraca czasu utc)
@@ -142,6 +152,21 @@ class RedditLoader:
   
 
         return output_list
+
+class UserCfg:
+    def __init__(self, **usercfg):
+        self.username = usercfg['username']
+        self.usr_mail = usercfg['usr_mail']
+        self.gmail_login_user = usercfg['gmail_login_user']
+        self.gmail_login_pwd = usercfg['gmail_login_pwd']
+        self.subject_tmpl = usercfg['subject_tmpl']
+        self.ref_cat = usercfg['ref_cat']
+        self.ref_t = usercfg['ref_t']
+        self.posts_per_sub = usercfg['posts_per_sub']
+        self.time_frame = usercfg['time_frame']
+        self.pp_treshold = usercfg['pp_treshold']
+        self.subreddits = usercfg['subreddits']
+        
 
 
 def mail(to, subject, text, gmail_user, gmail_pwd):
@@ -158,21 +183,57 @@ def mail(to, subject, text, gmail_user, gmail_pwd):
    mailServer.sendmail(gmail_user, to, msg.as_string())
    mailServer.close()
 
+def load_configs():
+    ''' TODO  docelowo funkcja powinna ladowac configi z plik[u|ow] '''
+
+    user1_cfg = {
+        'username' : 'user1',
+        'usr_mail' : 'xelnyq@gmail.com',
+        'gmail_login_user' : 'raggregator@gmail.com',
+        'gmail_login_pwd' : 'secret',
+        'subject_tmpl' : 'Reddit Aggregator\'s news for {date}',
+        'ref_cat' : 'top/', 'ref_t' : '?t=month', 'posts_per_sub' : 25 , 'time_frame' : 90000, 'pp_treshold' : 0.5,
+        'subreddits' : ['philosophy', 'cogsci', 'minimalism', 'webdev']
+        # 'subreddits' : ['philosophy', 'cogsci', 'minimalism', 'webdev', 'windows', 'linux', 'videos', 'funny', 'wtf', 
+        # 'aww', 'atheism', 'science', 'technology', 'neuro', 'psychology', 'CultCinema']
+    }
+
+    user2_cfg = {
+        'username' : 'user2',
+        'usr_mail' : 'xelnyq@gmail.com',
+        'gmail_login_user' : 'raggregator@gmail.com',
+        'gmail_login_pwd' : 'secret',
+        'subject_tmpl' : 'Reddit Aggregator\'s news for {date}',
+        'ref_cat' : 'top/', 'ref_t' : '?t=month', 'posts_per_sub' : 25 , 'time_frame' : 90000, 'pp_treshold' : 0.5,
+        'subreddits' : ['philosophy', 'minimalism',  'windows', 'webdev', 'linux', 'videos']
+        # 'subreddits' : ['philosophy', 'cogsci', 'minimalism', 'webdev', 'windows', 'linux', 'videos', 'funny', 'wtf', 
+        # 'aww', 'atheism', 'science', 'technology', 'neuro', 'psychology', 'CultCinema']
+    }
+
+    return [UserCfg(**user1_cfg)] + [UserCfg(**user2_cfg)]
+
+
 def main():
-    subreddits = ['philosophy', 'cogsci', 'minimalism', 'webdev', 'windows', 'linux', 'videos', 'funny', 'wtf', 'aww', 'atheism',
-        'science', 'technology', 'neuro', 'psychology', 'minimalism', 'CultCinema']
-    subreddits = ['philosophy', 'cogsci', 'minimalism']
 
-    value = RedditLoader.aggregate_subreddits(subreddits)
 
-    gmail_user = "raggregator@gmail.com"
-    gmail_pwd = "secret"
-    mail_to = "xelnyq@gmail.com"
-    subject = "Reddit Aggregator's news for %r" % datetime.datetime.now().strftime("%d-%m-%Y")
-    text = json.dumps(value, indent = 4)
+    userlist = load_configs()
 
-    mail(mail_to, subject, text, gmail_user, gmail_pwd)
-   
+
+    
+    for user in userlist:
+
+        value = RedditLoader.aggregate_subreddits(user.subreddits, ref_cat = user.ref_cat, ref_t = user.ref_t, 
+            posts_per_sub = user.posts_per_sub , time_frame = user.time_frame, pp_treshold = user.pp_treshold)
+
+        print '########################################################################################################'
+        print 'POSTS FOR USER: ' + user.username
+        print json.dumps(value, indent = 4)
+
+        # TEMPORARILY commented out
+        # text = json.dumps(value, indent = 4)
+        # mail(user.usr_mail, user.subject_tmpl.format(date = datetime.datetime.now().strftime("%d-%m-%Y")), text, 
+        #     user.gmail_login_user, user.gmail_login_pwd)
+       
 
 if __name__ == "__main__":
     main()
