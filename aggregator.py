@@ -158,14 +158,25 @@ class RedditLoader:
         else:
             while len(posts) >= 25 and len(posts) < post_no and loaded > 0:
                  last_post_id = posts[-1]['data']['name']
-                 next_site = cls.load_json_from_url(cls.build_url(subreddit, site = suffix, t = t, after =  last_post_id))
+                 next_site = cls.load_json_from_url(cls.build_url(subreddit, site = suffix, t = t, after = last_post_id))
                  loaded = len(next_site)
                  posts += next_site
             return RedditPost.load_posts(posts[:post_no])
 
     @classmethod
-    def aggregate_subreddits(cls, reddit_list, ref_cat = 'top', ref_t = 'month', posts_per_sub = 25 , 
-        time_frame = 90000, pp_treshold = 0.5):
+    def aggregate_subreddits(cls, reddit_list = [], user = None, ref_cat = 'top', ref_t = 'month', posts_per_sub = 25 , 
+        time_frame = 90000, pp_treshold = 0.5, sort_key = None, reverse_sort_order = True ):
+
+        if user != None:
+            reddit_list = user.subreddits 
+            ref_cat = user.ref_cat 
+            ref_t = user.ref_t 
+            posts_per_sub = user.posts_per_sub
+            time_frame = user.time_frame
+            pp_treshold = user.pp_treshold
+            sort_key = user.sort_key
+            reverse_sort_order = user.reverse_sort_order
+
 
         output_list = []
 
@@ -182,8 +193,9 @@ class RedditLoader:
                 #TODO sprawdzic zwracane czasy (time() nie zwraca czasu utc)
                 if (time.time()-item.created_utc) < time_frame and item.post_power() >= pp_treshold: 
 
-                    post_list.append([item.title, item.url, item.subreddit, item.num_comments, item.score, item.permalink, item.post_power(), item.hours_ago()])
+                    post_list.append(item)
 
+            if sort_key != None: post_list.sort(key = sort_key, reverse = reverse_sort_order)
             output_list.append({subreddit : post_list})
                   
   
@@ -203,8 +215,42 @@ class UserCfg:
         self.time_frame = usercfg['time_frame']
         self.pp_treshold = usercfg['pp_treshold']
         self.subreddits = usercfg['subreddits']
-        
 
+        self.posts_sort_by = usercfg['posts_sort_by']
+        self.posts_sort_order = usercfg['posts_sort_order']
+
+
+        if self.posts_sort_by == 'num_comments':
+            self.sort_key = lambda post: post.num_comments 
+        elif self.posts_sort_by == 'score':
+            self.sort_key = lambda post: post.score
+        elif self.posts_sort_by == 'post_power':
+            self.sort_key = lambda post: post.post_power()
+        elif self.posts_sort_by == 'hours_ago':
+            self.sort_key = lambda post: post.hours_ago()
+        else:
+            self.sort_key = None
+
+        if usercfg['posts_sort_order'] == 'asc':
+            self.reverse_sort_order = False
+        else:
+            self.reverse_sort_order = True
+
+
+        
+def dump_posts_to_json(posts):
+    output_list = []
+    for subreddit_dct in posts:
+        post_list = []
+        name = ''
+        for subreddit, postlist in subreddit_dct.iteritems():
+            name += subreddit 
+            for item in postlist:
+                post_list.append([item.title, item.url, item.subreddit, item.num_comments, item.score, item.permalink, 
+                    item.post_power(), item.hours_ago()])
+        output_list.append({subreddit : post_list})
+
+    return json.dumps(output_list, indent = 4)
 
 def mail(to, subject, text, gmail_user, gmail_pwd):
    msg = MIMEMultipart()
@@ -229,8 +275,9 @@ def load_configs():
         'gmail_login_user' : 'raggregator@gmail.com',
         'gmail_login_pwd' : 'secret',
         'subject_tmpl' : 'Reddit Aggregator\'s news for {date}',
+        'posts_sort_by' : 'None', 'posts_sort_order' : 'dsc',
         'ref_cat' : 'top', 'ref_t' : 'month', 'posts_per_sub' : 25 , 'time_frame' : 90000, 'pp_treshold' : 0.5,
-        'subreddits' : ['philosophy', 'cogsci']
+        'subreddits' : ['philosophy', 'cogsci', 'videos']
         # 'subreddits' : ['philosophy', 'cogsci', 'minimalism', 'webdev', 'windows', 'linux', 'videos', 'funny', 'wtf', 
         # 'aww', 'atheism', 'science', 'technology', 'neuro', 'psychology', 'CultCinema']
     }
@@ -241,8 +288,9 @@ def load_configs():
         'gmail_login_user' : 'raggregator@gmail.com',
         'gmail_login_pwd' : 'secret',
         'subject_tmpl' : 'Reddit Aggregator\'s news for {date}',
+        'posts_sort_by' : 'num_comments', 'posts_sort_order' : 'dsc',
         'ref_cat' : 'top', 'ref_t' : 'month', 'posts_per_sub' : 50 , 'time_frame' : 90000, 'pp_treshold' : 0.2,
-        'subreddits' : ['philosophy', 'minimalism',  'windows', 'webdev', 'linux', 'videos']
+        'subreddits' : ['philosophy', 'cogsci', 'videos']#, 'minimalism',  'windows', 'webdev', 'linux', 'videos']
         # 'subreddits' : ['philosophy', 'cogsci', 'minimalism', 'webdev', 'windows', 'linux', 'videos', 'funny', 'wtf', 
         # 'aww', 'atheism', 'science', 'technology', 'neuro', 'psychology', 'CultCinema']
     }
@@ -259,18 +307,19 @@ def main():
     
     for user in userlist:
 
-        value = RedditLoader.aggregate_subreddits(user.subreddits, ref_cat = user.ref_cat, ref_t = user.ref_t, 
-            posts_per_sub = user.posts_per_sub , time_frame = user.time_frame, pp_treshold = user.pp_treshold)
+        value = RedditLoader.aggregate_subreddits(user = user)
 
         print '########################################################################################################'
         print 'POSTS FOR USER: ' + user.username
-        print json.dumps(value, indent = 4)
+        text = dump_posts_to_json(value)
+        print text
 
         # TEMPORARILY commented out
-        # text = json.dumps(value, indent = 4)
         # mail(user.usr_mail, user.subject_tmpl.format(date = datetime.datetime.now().strftime("%d-%m-%Y")), text, 
         #     user.gmail_login_user, user.gmail_login_pwd)
        
+
+
 
 if __name__ == "__main__":
     main()
