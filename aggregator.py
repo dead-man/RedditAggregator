@@ -121,22 +121,50 @@ class RedditLoader:
             return cls.load_json_from_url(url, delay = delay*1.5)
 
     @classmethod
+    def build_url(cls, subreddit, site = '', t = '', after = ''):
+        if subreddit == '':
+            return 'http://www.reddit.com/'
+
+        if site == '':
+            url = 'http://www.reddit.com/r/' + subreddit + '/.json'
+        else:
+            url = 'http://www.reddit.com/r/' + subreddit + '/' + site + '/.json'
+
+        params = []
+
+        if t != '':
+            params.append('t=' + t)
+        if after != '':
+            params.append('after=' + after)
+
+        if len(params) == 0:
+            return url
+        else:
+            url += '?'
+            for i, param in enumerate(params):
+                url += param
+                if i + 1 == len(params): break
+                url += '&'
+
+        return url
+
+
+    @classmethod
     def load_subreddit(cls, subreddit, suffix = '', t = '', post_no = 25):
-        url = 'http://www.reddit.com/r/' + subreddit + '/' + suffix + '.json' + t
-        posts = cls.load_json_from_url(url)
+        posts = cls.load_json_from_url(cls.build_url(subreddit, site = suffix, t = t))
         loaded = len(posts)
         if loaded < 25 : 
             return RedditPost.load_posts(posts)
         else:
             while len(posts) >= 25 and len(posts) < post_no and loaded > 0:
                  last_post_id = posts[-1]['data']['name']
-                 next_site = cls.load_json_from_url(url + '?after=' + last_post_id)
+                 next_site = cls.load_json_from_url(cls.build_url(subreddit, site = suffix, t = t, after =  last_post_id))
                  loaded = len(next_site)
                  posts += next_site
             return RedditPost.load_posts(posts[:post_no])
 
     @classmethod
-    def aggregate_subreddits(cls, reddit_list, ref_cat = 'top/', ref_t = '?t=month', posts_per_sub = 25 , 
+    def aggregate_subreddits(cls, reddit_list, ref_cat = 'top', ref_t = 'month', posts_per_sub = 25 , 
         time_frame = 90000, pp_treshold = 0.5):
 
         output_list = []
@@ -201,7 +229,7 @@ def load_configs():
         'gmail_login_user' : 'raggregator@gmail.com',
         'gmail_login_pwd' : 'secret',
         'subject_tmpl' : 'Reddit Aggregator\'s news for {date}',
-        'ref_cat' : 'top/', 'ref_t' : '?t=month', 'posts_per_sub' : 25 , 'time_frame' : 90000, 'pp_treshold' : 0.5,
+        'ref_cat' : 'top', 'ref_t' : 'month', 'posts_per_sub' : 25 , 'time_frame' : 90000, 'pp_treshold' : 0.5,
         'subreddits' : ['philosophy', 'cogsci']
         # 'subreddits' : ['philosophy', 'cogsci', 'minimalism', 'webdev', 'windows', 'linux', 'videos', 'funny', 'wtf', 
         # 'aww', 'atheism', 'science', 'technology', 'neuro', 'psychology', 'CultCinema']
@@ -213,7 +241,7 @@ def load_configs():
         'gmail_login_user' : 'raggregator@gmail.com',
         'gmail_login_pwd' : 'secret',
         'subject_tmpl' : 'Reddit Aggregator\'s news for {date}',
-        'ref_cat' : 'top/', 'ref_t' : '?t=month', 'posts_per_sub' : 50 , 'time_frame' : 90000, 'pp_treshold' : 0.2,
+        'ref_cat' : 'top', 'ref_t' : 'month', 'posts_per_sub' : 50 , 'time_frame' : 90000, 'pp_treshold' : 0.2,
         'subreddits' : ['philosophy', 'minimalism',  'windows', 'webdev', 'linux', 'videos']
         # 'subreddits' : ['philosophy', 'cogsci', 'minimalism', 'webdev', 'windows', 'linux', 'videos', 'funny', 'wtf', 
         # 'aww', 'atheism', 'science', 'technology', 'neuro', 'psychology', 'CultCinema']
