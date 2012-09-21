@@ -3,11 +3,12 @@ import json
 import urllib2
 import time
 import smtplib
+import datetime
+import math
+import sys
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
 from email.MIMEText import MIMEText
-import datetime
-import sys # just for testing
 
 class RedditOpener:
     def __init__(self):
@@ -63,6 +64,17 @@ class RedditPost:
         pp = (25 / ago) * postscore / self.ref_score[self.subreddit]
         return pp
 
+    def hours_ago(self):
+        ago = int(math.ceil((time.time() - self.created_utc) / 3600))
+
+        if ago==1:
+            hr="hour"
+        else:
+            hr="hours"
+
+        string = "Posted %r %s ago" % (ago, hr)
+        return string
+
 class RedditLoader:
     last_req_time = 0
     retries = 0
@@ -106,10 +118,7 @@ class RedditLoader:
             
             cls.retries += 1
             print 'retrying....', cls.retries
-
-            ''' ZROBIONE REKURENCYJNIE TYLKO DO TESTOW!!!!!!!!!!!!!!!#$@%^%'''
             return cls.load_json_from_url(url, delay = delay*1.5)
-            #sys.exit(1)
 
     @classmethod
     def load_subreddit(cls, subreddit, suffix = '', t = '', post_no = 25):
@@ -121,7 +130,7 @@ class RedditLoader:
         else:
             while len(posts) >= 25 and len(posts) < post_no and loaded > 0:
                  last_post_id = posts[-1]['data']['name']
-                 next_site = cls.load_json_from_url(url + '&after=' + last_post_id)
+                 next_site = cls.load_json_from_url(url + '?after=' + last_post_id)
                  loaded = len(next_site)
                  posts += next_site
             return RedditPost.load_posts(posts[:post_no])
@@ -145,7 +154,7 @@ class RedditLoader:
                 #TODO sprawdzic zwracane czasy (time() nie zwraca czasu utc)
                 if (time.time()-item.created_utc) < time_frame and item.post_power() >= pp_treshold: 
 
-                    post_list.append([item.title, item.url])
+                    post_list.append([item.title, item.url, item.subreddit, item.num_comments, item.score, item.permalink, item.post_power(), item.hours_ago()])
 
             output_list.append({subreddit : post_list})
                   
@@ -193,7 +202,7 @@ def load_configs():
         'gmail_login_pwd' : 'secret',
         'subject_tmpl' : 'Reddit Aggregator\'s news for {date}',
         'ref_cat' : 'top/', 'ref_t' : '?t=month', 'posts_per_sub' : 25 , 'time_frame' : 90000, 'pp_treshold' : 0.5,
-        'subreddits' : ['philosophy', 'cogsci', 'minimalism', 'webdev']
+        'subreddits' : ['philosophy', 'cogsci']
         # 'subreddits' : ['philosophy', 'cogsci', 'minimalism', 'webdev', 'windows', 'linux', 'videos', 'funny', 'wtf', 
         # 'aww', 'atheism', 'science', 'technology', 'neuro', 'psychology', 'CultCinema']
     }
@@ -204,7 +213,7 @@ def load_configs():
         'gmail_login_user' : 'raggregator@gmail.com',
         'gmail_login_pwd' : 'secret',
         'subject_tmpl' : 'Reddit Aggregator\'s news for {date}',
-        'ref_cat' : 'top/', 'ref_t' : '?t=month', 'posts_per_sub' : 25 , 'time_frame' : 90000, 'pp_treshold' : 0.5,
+        'ref_cat' : 'top/', 'ref_t' : '?t=month', 'posts_per_sub' : 50 , 'time_frame' : 90000, 'pp_treshold' : 0.2,
         'subreddits' : ['philosophy', 'minimalism',  'windows', 'webdev', 'linux', 'videos']
         # 'subreddits' : ['philosophy', 'cogsci', 'minimalism', 'webdev', 'windows', 'linux', 'videos', 'funny', 'wtf', 
         # 'aww', 'atheism', 'science', 'technology', 'neuro', 'psychology', 'CultCinema']
