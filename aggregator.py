@@ -203,7 +203,24 @@ class RedditLoader:
         return output_list
 
 class UserCfg:
+
+    _default_cfg = {
+        'username' : 'defaultuser',
+        'usr_mail' : '',
+        'gmail_login_user' : 'raggregator@gmail.com',
+        'gmail_login_pwd' : 'secret',
+        'subject_tmpl' : 'Reddit Aggregator\'s news for {date}',
+        'posts_sort_by' : 'None', 'posts_sort_order' : 'dsc',
+        'ref_cat' : 'top', 'ref_t' : 'month', 'posts_per_sub' : 25 , 'time_frame' : 90000, 'pp_treshold' : 0.5,
+        'subreddits' : []
+    }
+
     def __init__(self, **usercfg):
+
+        for key in self._default_cfg.iterkeys():
+            if key not in usercfg:
+                usercfg[key] = self._default_cfg[key]
+
         self.username = usercfg['username']
         self.usr_mail = usercfg['usr_mail']
         self.gmail_login_user = usercfg['gmail_login_user']
@@ -272,9 +289,6 @@ def load_configs():
     user1_cfg = {
         'username' : 'user1',
         'usr_mail' : 'xelnyq@gmail.com',
-        'gmail_login_user' : 'raggregator@gmail.com',
-        'gmail_login_pwd' : 'secret',
-        'subject_tmpl' : 'Reddit Aggregator\'s news for {date}',
         'posts_sort_by' : 'None', 'posts_sort_order' : 'dsc',
         'ref_cat' : 'top', 'ref_t' : 'month', 'posts_per_sub' : 25 , 'time_frame' : 90000, 'pp_treshold' : 0.5,
         'subreddits' : ['philosophy', 'cogsci', 'videos']
@@ -285,11 +299,8 @@ def load_configs():
     user2_cfg = {
         'username' : 'user2',
         'usr_mail' : 'xelnyq@gmail.com',
-        'gmail_login_user' : 'raggregator@gmail.com',
-        'gmail_login_pwd' : 'secret',
-        'subject_tmpl' : 'Reddit Aggregator\'s news for {date}',
         'posts_sort_by' : 'num_comments', 'posts_sort_order' : 'dsc',
-        'ref_cat' : 'top', 'ref_t' : 'month', 'posts_per_sub' : 50 , 'time_frame' : 90000, 'pp_treshold' : 0.2,
+        'posts_per_sub' : 50 , 'pp_treshold' : 0.2,
         'subreddits' : ['philosophy', 'cogsci', 'videos']#, 'minimalism',  'windows', 'webdev', 'linux', 'videos']
         # 'subreddits' : ['philosophy', 'cogsci', 'minimalism', 'webdev', 'windows', 'linux', 'videos', 'funny', 'wtf', 
         # 'aww', 'atheism', 'science', 'technology', 'neuro', 'psychology', 'CultCinema']
