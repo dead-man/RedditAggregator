@@ -6,9 +6,11 @@ import smtplib
 import datetime
 import math
 import sys
+import glob
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
 from email.MIMEText import MIMEText
+
 
 class RedditOpener:
     def __init__(self):
@@ -284,29 +286,14 @@ def mail(to, subject, text, gmail_user, gmail_pwd):
    mailServer.close()
 
 def load_configs():
-    ''' TODO  docelowo funkcja powinna ladowac configi z plik[u|ow] '''
 
-    user1_cfg = {
-        'username' : 'user1',
-        'usr_mail' : 'xelnyq@gmail.com',
-        'posts_sort_by' : 'None', 'posts_sort_order' : 'dsc',
-        'ref_cat' : 'top', 'ref_t' : 'month', 'posts_per_sub' : 25 , 'time_frame' : 90000, 'pp_treshold' : 0.5,
-        'subreddits' : ['philosophy', 'cogsci', 'videos']
-        # 'subreddits' : ['philosophy', 'cogsci', 'minimalism', 'webdev', 'windows', 'linux', 'videos', 'funny', 'wtf', 
-        # 'aww', 'atheism', 'science', 'technology', 'neuro', 'psychology', 'CultCinema']
-    }
+    configs =[]
 
-    user2_cfg = {
-        'username' : 'user2',
-        'usr_mail' : 'xelnyq@gmail.com',
-        'posts_sort_by' : 'num_comments', 'posts_sort_order' : 'dsc',
-        'posts_per_sub' : 50 , 'pp_treshold' : 0.2,
-        'subreddits' : ['philosophy', 'cogsci', 'videos']#, 'minimalism',  'windows', 'webdev', 'linux', 'videos']
-        # 'subreddits' : ['philosophy', 'cogsci', 'minimalism', 'webdev', 'windows', 'linux', 'videos', 'funny', 'wtf', 
-        # 'aww', 'atheism', 'science', 'technology', 'neuro', 'psychology', 'CultCinema']
-    }
+    for cfg_file in glob.iglob('*.usercfg'):
+        with open(cfg_file) as usrcfg:
+            configs.append(UserCfg(**json.load(usrcfg)))
 
-    return [UserCfg(**user1_cfg)] + [UserCfg(**user2_cfg)]
+    return configs
 
 
 def main():
@@ -318,7 +305,7 @@ def main():
     
     for user in userlist:
 
-        value = RedditLoader.aggregate_subreddits(user = user)
+        value =  RedditLoader.aggregate_subreddits(user = user)
 
         print '########################################################################################################'
         print 'POSTS FOR USER: ' + user.username
