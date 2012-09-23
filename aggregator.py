@@ -29,7 +29,8 @@ class RedditPost:
 
     ref_score = {}
 
-    def __init__(self, **data ):
+
+    def __init__(self, pp_alg = 'default', **data ):
 
         self.subreddit = data['subreddit']
         self.id = data['id']
@@ -41,29 +42,50 @@ class RedditPost:
         self.url = data['url']
         self.created_utc  = data['created_utc']
 
+        self.pp_alg = pp_alg
+
     def __str__(self):
         return u'title: {} - score: {} - posted: {} hours ago - post_power: {}'.format(self.title, 
             self.score + self.num_comments, (time.time() - self.created_utc) / 3600, self.post_power()).encode("utf-8")
 
     @classmethod
-    def load_posts(cls, posts_json):
-        return [RedditPost(**post['data']) for post in posts_json ]
+    def load_posts(cls, posts_json, pp_alg = 'default'):
+        return [RedditPost(pp_alg = pp_alg, **post['data']) for post in posts_json ]
+
 
     @classmethod
     def calculate_ref_score(cls, reddit_posts, subreddit = ''):
-        ref_score = 0
         if subreddit == '' and len(reddit_posts) > 0:
             subreddit = reddit_posts[0].subreddit
+            pp_alg = reddit_posts[0].pp_alg
+
+        cls.ref_score[subreddit] = {}
+
+        if pp_alg == 'default':
+            cls.ref_score[subreddit][pp_alg] = cls._calculate_ref_score_default(reddit_posts, subreddit = subreddit)
+        #print 'ref_score for subreddit '+ subreddit + ': ' + str(cls.ref_score[subreddit][pp_alg]) + ' pp_alg: ' + pp_alg
+        return cls.ref_score[subreddit][pp_alg]
+
+
+    @classmethod
+    def _calculate_ref_score_default(cls, reddit_posts, subreddit = ''):
+        ref_score = 0
+        
         for item in reddit_posts[:3]:
             ref_score += item.score + item.num_comments
         ref_score /= 7.0
-        cls.ref_score[subreddit] = ref_score
+        #cls.ref_score[subreddit] = ref_score
         return ref_score
 
     def post_power(self):
+        if self.pp_alg == 'default':
+            return self._post_power_default()
+
+
+    def _post_power_default(self):
         ago = (time.time() - self.created_utc) / 3600
         postscore = self.score + self.num_comments
-        pp = (25 / ago) * postscore / self.ref_score[self.subreddit]
+        pp = (25 / ago) * postscore / self.ref_score[self.subreddit][self.pp_alg]
         return pp
 
     def hours_ago(self):
@@ -152,22 +174,22 @@ class RedditLoader:
 
 
     @classmethod
-    def load_subreddit(cls, subreddit, suffix = '', t = '', post_no = 25):
+    def load_subreddit(cls, subreddit, suffix = '', t = '', post_no = 25, pp_alg = 'default'):
         posts = cls.load_json_from_url(cls.build_url(subreddit, site = suffix, t = t))
         loaded = len(posts)
         if loaded < 25 : 
-            return RedditPost.load_posts(posts)
+            return RedditPost.load_posts(posts, pp_alg = pp_alg)
         else:
             while len(posts) >= 25 and len(posts) < post_no and loaded > 0:
                  last_post_id = posts[-1]['data']['name']
                  next_site = cls.load_json_from_url(cls.build_url(subreddit, site = suffix, t = t, after = last_post_id))
                  loaded = len(next_site)
                  posts += next_site
-            return RedditPost.load_posts(posts[:post_no])
+            return RedditPost.load_posts(posts[:post_no], pp_alg = pp_alg)
 
     @classmethod
     def aggregate_subreddits(cls, reddit_list = [], user = None, ref_cat = 'top', ref_t = 'month', posts_per_sub = 25 , 
-        time_frame = 90000, pp_treshold = 0.5, sort_key = None, reverse_sort_order = True ):
+        time_frame = 90000, pp_treshold = 0.5, sort_key = None, reverse_sort_order = True, pp_alg = 'default'):
 
         if user != None:
             reddit_list = user.subreddits 
@@ -178,6 +200,7 @@ class RedditLoader:
             pp_treshold = user.pp_treshold
             sort_key = user.sort_key
             reverse_sort_order = user.reverse_sort_order
+            pp_alg = user.pp_alg
 
 
         output_list = []
@@ -214,6 +237,7 @@ class UserCfg:
         'subject_tmpl' : 'Reddit Aggregator\'s news for {date}',
         'posts_sort_by' : 'None', 'posts_sort_order' : 'dsc',
         'ref_cat' : 'top', 'ref_t' : 'month', 'posts_per_sub' : 25 , 'time_frame' : 90000, 'pp_treshold' : 0.5,
+        'pp_alg' : 'default',
         'subreddits' : []
     }
 
@@ -233,6 +257,7 @@ class UserCfg:
         self.posts_per_sub = usercfg['posts_per_sub']
         self.time_frame = usercfg['time_frame']
         self.pp_treshold = usercfg['pp_treshold']
+        self.pp_alg = usercfg['pp_alg']
         self.subreddits = usercfg['subreddits']
 
         self.posts_sort_by = usercfg['posts_sort_by']
@@ -291,17 +316,23 @@ def load_configs():
 
     for cfg_file in glob.iglob('*.usercfg'):
         with open(cfg_file) as usrcfg:
-            configs.append(UserCfg(**json.load(usrcfg)))
-
+            try:
+                configs.append(UserCfg(**json.load(usrcfg)))
+            except ValueError:
+                print '!!!!!!!!!error parsing config file: ' + cfg_file + ', file ommited'
+   
     return configs
 
 class Template:
     
-    def item(self, url, title, permalink, num_comments, score, post_power, hours_ago):
-        item = "<br><a href={0}>{1}</a> - <a href={2}>Comments: {3}</a> - Score: {4} - Post Power: {5} - {6}</br>".format(url, title, permalink, num_comments, score, post_power, hours_ago)
+    @classmethod
+    def item(cls, url, title, permalink, num_comments, score, post_power, hours_ago):
+        item = "<br><a href={0}>{1}</a> - <a href={2}>Comments: {3}</a> - Score: {4} - Post Power: {5} - {6}</br>".format(url, 
+            title, permalink, num_comments, score, post_power, hours_ago)
         return item
 
-    def section(self, subreddit):
+    @classmethod
+    def section(cls, subreddit):
         section = "<h2>{0}:</h2>".format(subreddit)
         return section
 
@@ -310,7 +341,7 @@ def main():
 
 
     userlist = load_configs()
-    html = Template()
+    html = Template
 
     
     for user in userlist:
