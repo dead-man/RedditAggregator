@@ -7,7 +7,7 @@
     "ref_t" : "month", 
     "posts_per_sub" : 25 , 
     "time_frame" : 90000, 
-    "pp_treshold" : 0.5,
-    "subreddits" : ["philosophy", "cogsci", "videos"]
+    "pp_treshold" : 0.3,
+    "subreddits" : ["philosophy", "cogsci"]
     
 }

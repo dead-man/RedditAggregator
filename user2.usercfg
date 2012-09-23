@@ -1,10 +1,10 @@
 {
     "username" : "user2",
     "usr_mail" : "xelnyq@gmail.com",
-    "posts_sort_by" : "num_comments", 
+    "posts_sort_by" : "post_power", 
     "posts_sort_order" : "dsc",
-    "posts_per_sub" : 50 , 
+    "posts_per_sub" : 25 , 
     "pp_treshold" : 0.2,
-    "subreddits" : ["philosophy", "cogsci", "videos"]
+    "subreddits" : ["philosophy", "aww"]
   
 }

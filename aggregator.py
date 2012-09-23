@@ -295,23 +295,41 @@ def load_configs():
 
     return configs
 
+class Template:
+    
+    def item(self, url, title, permalink, num_comments, score, post_power, hours_ago):
+        item = "<br><a href={0}>{1}</a> - <a href={2}>Comments: {3}</a> - Score: {4} - Post Power: {5} - {6}</br>".format(url, title, permalink, num_comments, score, post_power, hours_ago)
+        return item
+
+    def section(self, subreddit):
+        section = "<h2>{0}:</h2>".format(subreddit)
+        return section
+
 
 def main():
 
 
     userlist = load_configs()
-
+    html = Template()
 
     
     for user in userlist:
 
-        value =  RedditLoader.aggregate_subreddits(user = user)
+        value = RedditLoader.aggregate_subreddits(user = user)
 
         print '########################################################################################################'
-        print 'POSTS FOR USER: ' + user.username
-        text = dump_posts_to_json(value)
-        print text
-
+        print 'Username: ' + user.username
+        print '<br></br>'
+        print 'Post Power threshold: ' + str(user.pp_treshold)
+        print '<br></br>'
+        print 'Sorted by: ' + user.posts_sort_by
+        #text = dump_posts_to_json(value)
+        #print text
+        for subreddit in value:
+            for name, posts in subreddit.iteritems():
+                print html.section(name)
+                for item in posts:
+                    print html.item(item.url, item.title, item.permalink, item.num_comments, item.score, "{0:.2f}".format(item.post_power()), item.hours_ago())
         # TEMPORARILY commented out
         # mail(user.usr_mail, user.subject_tmpl.format(date = datetime.datetime.now().strftime("%d-%m-%Y")), text, 
         #     user.gmail_login_user, user.gmail_login_pwd)
