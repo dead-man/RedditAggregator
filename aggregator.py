@@ -7,6 +7,7 @@ import datetime
 import math
 import sys
 import glob
+import urlparse
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
 from email.MIMEText import MIMEText
@@ -189,7 +190,7 @@ class RedditLoader:
 
     @classmethod
     def aggregate_subreddits(cls, reddit_list = [], user = None, ref_cat = 'top', ref_t = 'month', posts_per_sub = 25 , 
-        time_frame = 90000, pp_treshold = 0.5, sort_key = None, reverse_sort_order = True, pp_alg = 'default'):
+        time_frame = 90000, pp_treshold = 0.5, sort_key = None, reverse_sort_order = True, pp_alg = 'default' , domain_filter = ''):
 
         if user != None:
             reddit_list = user.subreddits 
@@ -201,6 +202,7 @@ class RedditLoader:
             sort_key = user.sort_key
             reverse_sort_order = user.reverse_sort_order
             pp_alg = user.pp_alg
+            domain_filter = user.domain_filter
 
 
         output_list = []
@@ -215,8 +217,15 @@ class RedditLoader:
             posts = RedditLoader.load_subreddit(subreddit, post_no = posts_per_sub)
             
             for item in posts:
+                filtered = False
+                if domain_filter != '':
+                    for expr in domain_filter.split(';'):
+                        if urlparse.urlparse(item.url).netloc.find(expr) != -1:
+                            filtered = True
+                            break
+
                 #TODO sprawdzic zwracane czasy (time() nie zwraca czasu utc)
-                if (time.time()-item.created_utc) < time_frame and item.post_power() >= pp_treshold: 
+                if not filtered and (time.time()-item.created_utc) < time_frame and item.post_power() >= pp_treshold: 
 
                     post_list.append(item)
 
@@ -238,6 +247,7 @@ class UserCfg:
         'posts_sort_by' : 'None', 'posts_sort_order' : 'dsc',
         'ref_cat' : 'top', 'ref_t' : 'month', 'posts_per_sub' : 25 , 'time_frame' : 90000, 'pp_treshold' : 0.5,
         'pp_alg' : 'default',
+        'domain_filter' : '',
         'subreddits' : []
     }
 
@@ -258,6 +268,7 @@ class UserCfg:
         self.time_frame = usercfg['time_frame']
         self.pp_treshold = usercfg['pp_treshold']
         self.pp_alg = usercfg['pp_alg']
+        self.domain_filter = usercfg['domain_filter']
         self.subreddits = usercfg['subreddits']
 
         self.posts_sort_by = usercfg['posts_sort_by']
@@ -327,8 +338,8 @@ class Template:
     
     @classmethod
     def item(cls, url, title, permalink, num_comments, score, post_power, hours_ago):
-        item = "<br><a href={0}>{1}</a> - <a href={2}>Comments: {3}</a> - Score: {4} - Post Power: {5} - {6}</br>".format(url, 
-            title, permalink, num_comments, score, post_power, hours_ago)
+        item = "<br><a href={0}>{1}</a> - <a href={2}>Comments: {3}</a> - Score: {4} - Post Power: {5} - {6}</br>".format(
+            url, title, permalink, num_comments, score, post_power, hours_ago)
         return item
 
     @classmethod
@@ -360,7 +371,8 @@ def main():
             for name, posts in subreddit.iteritems():
                 print html.section(name)
                 for item in posts:
-                    print html.item(item.url, item.title, item.permalink, item.num_comments, item.score, "{0:.2f}".format(item.post_power()), item.hours_ago())
+                    print html.item(item.url, item.title.encode('ascii', 'replace'), item.permalink, item.num_comments, item.score, 
+                        '{0:.2f}'.format(item.post_power()), item.hours_ago())
         # TEMPORARILY commented out
         # mail(user.usr_mail, user.subject_tmpl.format(date = datetime.datetime.now().strftime("%d-%m-%Y")), text, 
         #     user.gmail_login_user, user.gmail_login_pwd)
