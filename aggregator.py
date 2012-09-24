@@ -11,11 +11,11 @@ import urlparse
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
 from email.MIMEText import MIMEText
-
+import config as cfg
 
 class RedditOpener:
     def __init__(self):
-        self.user_agent = 'PrivateRedditAggregatorBot/1.0'
+        self.user_agent = cfg.user_agent
         self.opener = urllib2.build_opener()
         self.opener.add_handler(urllib2.HTTPCookieProcessor())
         self.opener.addheaders = [('User-agent', self.user_agent)]
@@ -31,7 +31,7 @@ class RedditPost:
     ref_score = {}
 
 
-    def __init__(self, pp_alg = 'default', **data ):
+    def __init__(self, pp_alg = cfg.default_user_cfg['pp_alg'], **data ):
 
         self.subreddit = data['subreddit']
         self.id = data['id']
@@ -50,7 +50,7 @@ class RedditPost:
             self.score + self.num_comments, (time.time() - self.created_utc) / 3600, self.post_power()).encode("utf-8")
 
     @classmethod
-    def load_posts(cls, posts_json, pp_alg = 'default'):
+    def load_posts(cls, posts_json, pp_alg = cfg.default_user_cfg['pp_alg']):
         return [RedditPost(pp_alg = pp_alg, **post['data']) for post in posts_json ]
 
 
@@ -64,6 +64,8 @@ class RedditPost:
 
         if pp_alg == 'default':
             cls.ref_score[subreddit][pp_alg] = cls._calculate_ref_score_default(reddit_posts, subreddit = subreddit)
+        else:
+            raise NotImplementedError('Unknown post_power alghorithm.')
         #print 'ref_score for subreddit '+ subreddit + ': ' + str(cls.ref_score[subreddit][pp_alg]) + ' pp_alg: ' + pp_alg
         return cls.ref_score[subreddit][pp_alg]
 
@@ -81,6 +83,8 @@ class RedditPost:
     def post_power(self):
         if self.pp_alg == 'default':
             return self._post_power_default()
+        else:
+            raise NotImplementedError('Unknown post_power alghorithm.')
 
 
     def _post_power_default(self):
@@ -107,7 +111,7 @@ class RedditLoader:
     reddit_cache = {}
 
     @classmethod
-    def load_json_from_url(cls, url, delay = 2, cache_refresh_interval = 300):
+    def load_json_from_url(cls, url, delay = cfg.default_request_delay, cache_refresh_interval = cfg.default_cache_refresh_interval):
 
         if url in cls.reddit_cache and time.time() - cls.reddit_cache[url]['last_refresh'] < cache_refresh_interval:
             print 'url ' + url + ' arleady in cache, NOT REQUESTING'
@@ -134,7 +138,7 @@ class RedditLoader:
             cls.reddit_cache[url]['last_refresh'] = time.time()
             cls.reddit_cache[url]['posts'] = json_dct['data']['children']
             return json_dct['data']['children']
-        elif cls.retries >= 20:
+        elif cls.retries >= cfg.max_retries:
             print ' retries no exceeded... exiting'
             sys.exit(1)
         else:
@@ -143,7 +147,7 @@ class RedditLoader:
             
             cls.retries += 1
             print 'retrying....', cls.retries
-            return cls.load_json_from_url(url, delay = delay*1.5)
+            return cls.load_json_from_url(url, delay = delay * cfg.retry_delay_multiplier)
 
     @classmethod
     def build_url(cls, subreddit, site = '', t = '', after = ''):
@@ -175,13 +179,13 @@ class RedditLoader:
 
 
     @classmethod
-    def load_subreddit(cls, subreddit, suffix = '', t = '', post_no = 25, pp_alg = 'default'):
+    def load_subreddit(cls, subreddit, suffix = '', t = '', post_no = cfg.posts_in_json_page, pp_alg = cfg.default_user_cfg['pp_alg']):
         posts = cls.load_json_from_url(cls.build_url(subreddit, site = suffix, t = t))
         loaded = len(posts)
-        if loaded < 25 : 
+        if loaded < cfg.posts_in_json_page : 
             return RedditPost.load_posts(posts, pp_alg = pp_alg)
         else:
-            while len(posts) >= 25 and len(posts) < post_no and loaded > 0:
+            while len(posts) >= cfg.posts_in_json_page and len(posts) < post_no and loaded > 0:
                  last_post_id = posts[-1]['data']['name']
                  next_site = cls.load_json_from_url(cls.build_url(subreddit, site = suffix, t = t, after = last_post_id))
                  loaded = len(next_site)
@@ -189,8 +193,14 @@ class RedditLoader:
             return RedditPost.load_posts(posts[:post_no], pp_alg = pp_alg)
 
     @classmethod
-    def aggregate_subreddits(cls, reddit_list = [], user = None, ref_cat = 'top', ref_t = 'month', posts_per_sub = 25 , 
-        time_frame = 90000, pp_treshold = 0.5, sort_key = None, reverse_sort_order = True, pp_alg = 'default' , domain_filter = ''):
+    def aggregate_subreddits(cls, reddit_list = [], user = None, ref_cat = cfg.default_user_cfg['ref_cat'], 
+        ref_t = cfg.default_user_cfg['ref_t'], 
+        posts_per_sub = cfg.default_user_cfg['posts_per_sub'] , 
+        time_frame = cfg.default_user_cfg['time_frame'], 
+        pp_treshold = cfg.default_user_cfg['pp_treshold'], 
+        sort_key = None, reverse_sort_order = True, 
+        pp_alg = cfg.default_user_cfg['pp_alg'] , 
+        domain_filter = cfg.default_user_cfg['domain_filter']):
 
         if user != None:
             reddit_list = user.subreddits 
@@ -219,7 +229,7 @@ class RedditLoader:
             for item in posts:
                 filtered = False
                 if domain_filter != '':
-                    for expr in domain_filter.split(';'):
+                    for expr in domain_filter.split(cfg.domain_filter_spliter):
                         if urlparse.urlparse(item.url).netloc.find(expr) != -1:
                             filtered = True
                             break
@@ -238,18 +248,7 @@ class RedditLoader:
 
 class UserCfg:
 
-    _default_cfg = {
-        'username' : 'defaultuser',
-        'usr_mail' : '',
-        'gmail_login_user' : 'raggregator@gmail.com',
-        'gmail_login_pwd' : 'secret',
-        'subject_tmpl' : 'Reddit Aggregator\'s news for {date}',
-        'posts_sort_by' : 'None', 'posts_sort_order' : 'dsc',
-        'ref_cat' : 'top', 'ref_t' : 'month', 'posts_per_sub' : 25 , 'time_frame' : 90000, 'pp_treshold' : 0.5,
-        'pp_alg' : 'default',
-        'domain_filter' : '',
-        'subreddits' : []
-    }
+    _default_cfg = cfg.default_user_cfg
 
     def __init__(self, **usercfg):
 
@@ -313,7 +312,7 @@ def mail(to, subject, text, gmail_user, gmail_pwd):
    msg['To'] = to
    msg['Subject'] = subject
    msg.attach(MIMEText(text))
-   mailServer = smtplib.SMTP("smtp.gmail.com", 587)
+   mailServer = smtplib.SMTP(cfg.gmail_smtp_server, cfg.gmail_smtp_port)
    mailServer.ehlo()
    mailServer.starttls()
    mailServer.ehlo()
@@ -325,7 +324,7 @@ def load_configs():
 
     configs =[]
 
-    for cfg_file in glob.iglob('*.usercfg'):
+    for cfg_file in glob.iglob(cfg.userconfig_file_pattern):
         with open(cfg_file) as usrcfg:
             try:
                 configs.append(UserCfg(**json.load(usrcfg)))
@@ -350,7 +349,7 @@ class Template:
 
 def main():
 
-
+    print cfg.default_user_cfg
     userlist = load_configs()
     html = Template
 
