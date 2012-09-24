@@ -5,7 +5,7 @@
     "posts_sort_order" : "dsc",
     "posts_per_sub" : 25 , 
     "pp_treshold" : 0.2,
-    "domain_filter" : "imgur",
-    "subreddits" : ["philosophy", "aww"]
+    "domain_filter" : "",
+    "subreddits" : [["philosophy", "freethought", "foodforthought"], ["entrepreneur", "business", "financialindependence", "startups"], ["lifehacks", "lifeprotips"]]
   
 }
