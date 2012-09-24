@@ -12,6 +12,7 @@ from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
 from email.MIMEText import MIMEText
 import config as cfg
+from template import Template
 
 class RedditOpener:
     def __init__(self):
@@ -101,7 +102,7 @@ class RedditPost:
         else:
             hr="hours"
 
-        string = "Posted %r %s ago" % (ago, hr)
+        string = "%r %s ago" % (ago, hr)
         return string
 
 class RedditLoader:
@@ -221,6 +222,7 @@ class RedditLoader:
         
             post_list = []
 
+<<<<<<< HEAD
             if not isinstance(entry, list):
                 grouplist = [entry]
             else:
@@ -246,6 +248,33 @@ class RedditLoader:
                     #TODO sprawdzic zwracane czasy (time() nie zwraca czasu utc)
                     if not filtered and (time.time()-item.created_utc) < time_frame and item.post_power() >= pp_treshold: 
                         post_list.append(item)
+=======
+            if not isinstance(entry, list):  
+                grouplist = [entry]
+            else:
+                grouplist = entry
+
+            for subreddit in grouplist:
+                top_posts = RedditLoader.load_subreddit(subreddit, ref_cat, ref_t)
+
+                RedditPost.calculate_ref_score(top_posts)
+   
+                posts = RedditLoader.load_subreddit(subreddit, post_no = posts_per_sub)
+
+                for item in posts:
+
+
+                    filtered = False
+                    if domain_filter != '':
+                        for expr in domain_filter.split(cfg.domain_filter_spliter):  
+                            if urlparse.urlparse(item.url).netloc.find(expr) != -1: 
+                                filtered = True
+                                break
+
+                    if not filtered and (time.time()-item.created_utc) < time_frame and item.post_power() >= pp_treshold: 
+                        post_list.append(item)
+ 
+>>>>>>> HTML templating done
 
             if sort_key != None: post_list.sort(key = sort_key, reverse = reverse_sort_order)
             output_list.append({';'.join(grouplist) : post_list})
@@ -308,8 +337,12 @@ def dump_posts_to_json(posts):
         for subreddit, postlist in subreddit_dct.iteritems():
             name += subreddit 
             for item in postlist:
+<<<<<<< HEAD
                 post_list.append([item.title, item.url, item.subreddit, #item.num_comments, item.score, item.permalink, 
                     item.post_power(), item.hours_ago()])
+=======
+                post_list.append([item.title, item.url, item.subreddit, item.num_comments, item.score, item.permalink, item.post_power(), item.hours_ago()])
+>>>>>>> HTML templating done
         output_list.append({subreddit : post_list})
 
     return json.dumps(output_list, indent = 4)
@@ -341,23 +374,12 @@ def load_configs():
    
     return configs
 
-class Template:
-    
-    @classmethod
-    def item(cls, url, title, permalink, num_comments, score, post_power, hours_ago):
-        item = "<br><a href={0}>{1}</a> - <a href={2}>Comments: {3}</a> - Score: {4} - Post Power: {5} - {6}</br>".format(
-            url, title, permalink, num_comments, score, post_power, hours_ago)
-        return item
-
-    @classmethod
-    def section(cls, subreddit):
-        section = "<h2>{0}:</h2>".format(subreddit)
-        return section
-
-
 def main():
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> HTML templating done
     userlist = load_configs()
     html = Template
 
@@ -365,8 +387,9 @@ def main():
     for user in userlist:
 
         value = RedditLoader.aggregate_subreddits(user = user)
-
+        output=""
         print '########################################################################################################'
+<<<<<<< HEAD
         print 'Username: ' + user.username
         print '<br></br>'
         print 'Post Power threshold: ' + str(user.pp_treshold)
@@ -380,6 +403,30 @@ def main():
                 for item in posts: pass
                     # print html.item(item.url, item.title.encode('ascii', 'replace'), item.permalink, item.num_comments, item.score, 
                     #     '{0:.2f}'.format(item.post_power()), item.hours_ago())
+=======
+        output+= html.head()
+        #text = dump_posts_to_json(value)
+        #print text
+        
+        for subreddit in value:
+            for name, posts in subreddit.iteritems():
+                output+= html.tablestart(name.title())
+                for item in posts:
+                    output+= html.item(item.url, item.title.encode('ascii', 'replace'), item.permalink, item.num_comments, item.score, 
+                        '{0:.2f}'.format(item.post_power()), item.hours_ago(), item.subreddit)
+                output+= html.tableend()
+
+        #delete those outputs later
+        output+= '<hr></hr><p>' + 'Username: ' + user.username + '</p>'
+        output+= '<p>' + 'Post Power threshold: ' + str(user.pp_treshold) + '</p>'
+        output+= '<p>' + 'Sorted by: ' + user.posts_sort_by + '</p>'
+        ##########
+
+        f = open(user.username + '.html', 'w+')
+        f.write(output)
+        f.close()
+
+>>>>>>> HTML templating done
         # TEMPORARILY commented out
         # mail(user.usr_mail, user.subject_tmpl.format(date = datetime.datetime.now().strftime("%d-%m-%Y")), text, 
         #     user.gmail_login_user, user.gmail_login_pwd)
