@@ -7,7 +7,6 @@ import datetime
 import math
 import sys
 import glob
-import urlparse
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
 from email.MIMEText import MIMEText
@@ -43,6 +42,8 @@ class RedditPost:
         self.name = data['name']
         self.url = data['url']
         self.created_utc  = data['created_utc']
+        self.domain = data['domain']
+        self.is_self = data['is_self']
 
         self.pp_alg = pp_alg
 
@@ -240,14 +241,15 @@ class RedditLoader:
                     filtered = False
                     if domain_filter != '':
                         for expr in domain_filter.split(cfg.domain_filter_spliter):  
-                            if urlparse.urlparse(item.url).netloc.find(expr) != -1: 
+                            if item.domain.find(expr) != -1: 
                                 filtered = True
                                 break
 
                     if not filtered and (time.time()-item.created_utc) < time_frame and item.post_power() >= pp_treshold: 
                         post_list.append(item)
-            if sort_key != None: post_list.sort(key = sort_key, reverse = reverse_sort_order)
-            output_list.append({';'.join(grouplist) : post_list})
+            if post_list:
+                if sort_key != None: post_list.sort(key = sort_key, reverse = reverse_sort_order)
+                output_list.append({';'.join(grouplist) : post_list})
                   
   
 
