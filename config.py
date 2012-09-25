@@ -29,6 +29,14 @@ default_user_cfg = {
 image_types = ['.jpg', '.png', '.gif', 'imgur.com/', 'media.tumblr.com/']
 video_types = ['www.youtube.com', 'vimeo.com', 'youtu.be', 'liveleak.com/']
 
+
+logging_config = {
+    'filename' : 'aggregator.log', 
+    'level'  : 'INFO',
+    'format' : '%(asctime)s  %(levelname)-8s %(message)s'
+}
+
+
 ############# CRITICAL VARIABLES, DO NOT MODIFY:#################
 
 posts_in_json_page = 25

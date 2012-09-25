@@ -12,6 +12,7 @@ from email.MIMEBase import MIMEBase
 from email.MIMEText import MIMEText
 import config as cfg
 from template import Template
+import logging
 
 class RedditOpener:
     def __init__(self):
@@ -68,7 +69,7 @@ class RedditPost:
             cls.ref_score[subreddit][pp_alg] = cls._calculate_ref_score_default(reddit_posts, subreddit = subreddit)
         else:
             raise NotImplementedError('Unknown post_power alghorithm.')
-        #print 'ref_score for subreddit '+ subreddit + ': ' + str(cls.ref_score[subreddit][pp_alg]) + ' pp_alg: ' + pp_alg
+        logging.debug('ref_score for subreddit '+ subreddit + ': ' + str(cls.ref_score[subreddit][pp_alg]) + ' pp_alg: ' + pp_alg)
         return cls.ref_score[subreddit][pp_alg]
 
 
@@ -131,21 +132,21 @@ class RedditLoader:
     def load_json_from_url(cls, url, delay = cfg.default_request_delay, cache_refresh_interval = cfg.default_cache_refresh_interval):
 
         if url in cls.reddit_cache and time.time() - cls.reddit_cache[url]['last_refresh'] < cache_refresh_interval:
-            print 'url ' + url + ' arleady in cache, NOT REQUESTING'
+            logging.info('Url ' + url + ' arleady in cache, NOT REQUESTING')
             return cls.reddit_cache[url]['posts']
 
         time_elapsed_since_last_req = time.time() - cls.last_req_time
         time_required = delay
         if (time_elapsed_since_last_req < time_required):
-            #print 'sleeping for ' , time_required - time_elapsed_since_last_req
+            logging.debug('Sleeping for {}'.format(time_required - time_elapsed_since_last_req))
             time.sleep(time_required - time_elapsed_since_last_req)
-        print 'requesting url ' , url
+        logging.info('Requesting url {}'.format(url))
         cls.last_req_time = time.time()
         response = cls.opener.open(url)
-        print 'site responded with HTTP code: ', response.getcode()
+        logging.info('Site responded with HTTP code: {}'.format(response.getcode()))
 
         json_message = response.read()
-        #print '...and message: ', json_message
+        logging.debug('Message recieved: {}'.format(json_message))
         json_dct = json.loads(json_message)
 
         if 'data' in json_dct and 'children' in json_dct['data']:
@@ -156,14 +157,14 @@ class RedditLoader:
             cls.reddit_cache[url]['posts'] = json_dct['data']['children']
             return json_dct['data']['children']
         elif cls.retries >= cfg.max_retries:
-            print ' retries no exceeded... exiting'
+            logging.error('max_retries exceeded... exiting')
             sys.exit(1)
         else:
-            print ' site returned no posts: ', json_dct
+            logging.warning('Site returned no posts: {}'.format(json_dct))
             
             
             cls.retries += 1
-            print 'retrying....', cls.retries
+            logging.warning('Retrying last request.... retry count: {}'.format(cls.retries))
             return cls.load_json_from_url(url, delay = delay * cfg.retry_delay_multiplier, cache_refresh_interval = cache_refresh_interval)
 
     @classmethod
@@ -344,17 +345,21 @@ def mail(to, subject, text, gmail_user, gmail_pwd):
    mailServer.sendmail(gmail_user, to, msg.as_string())
    mailServer.close()
 
-def load_configs():
+   logging.info('Email sent to: {}'.format(to))
 
+def load_configs():
+    logging.info('Started loading user configs')
     configs =[]
 
     for cfg_file in glob.iglob(cfg.userconfig_file_pattern):
         with open(cfg_file) as usrcfg:
             try:
                 configs.append(UserCfg(**json.load(usrcfg)))
+                logging.info('Config from file: {} successfully loaded'.format(cfg_file))
             except ValueError:
-                print '!!!!!!!!!error parsing config file: ' + cfg_file + ', file ommited'
-   
+                logging.error('Error parsing config file: ' + cfg_file + ', file ommited.')
+
+    logging.info('Finished loading user configs')   
     return configs
 
 def main():
@@ -364,10 +369,10 @@ def main():
 
     
     for user in userlist:
-
+        logging.info('###################### Started processing user: {}'.format(user.username))
         value = RedditLoader.aggregate_subreddits(user = user)
-        output=""
-        print '########################################################################################################'
+        output=''
+        
         output+= html.head()
         #text = dump_posts_to_json(value)
         #print text
@@ -399,4 +404,16 @@ def main():
 
 
 if __name__ == "__main__":
+    cfg.logging_config['level'] = getattr(logging, cfg.logging_config['level'].upper())
+    logging.basicConfig(**cfg.logging_config)
+
+    console = logging.StreamHandler()
+    console.setLevel(logging.INFO)
+    formatter = logging.Formatter(cfg.logging_config['format'])
+    console.setFormatter(formatter)
+    logging.getLogger('').addHandler(console)
+
+
+    logging.info('Application started')
     main()
+    logging.info('Application finished')
