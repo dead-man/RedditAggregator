@@ -6,6 +6,6 @@
     "posts_per_sub" : 25 , 
     "pp_treshold" : 0.2,
     "domain_filter" : "",
-    "subreddits" : [["philosophy", "freethought", "foodforthought"], ["entrepreneur", "business", "financialindependence", "startups"], ["lifehacks", "lifeprotips"]]
+    "subreddits" : [["philosophy", "freethought", "foodforthought"], ["entrepreneur", "startups", "smallbusiness", "business", "technology"], ["videos", "aww"]]
   
 }

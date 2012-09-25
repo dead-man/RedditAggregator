@@ -106,6 +106,22 @@ class RedditPost:
         string = "%r %s ago" % (ago, hr)
         return string
 
+    def type(self):
+
+        type=""
+
+        for item in ['.jpg', '.png', '.gif', 'imgur.com/', 'media.tumblr.com/']:
+            if self.url.find(item) != -1:
+                type="image"
+
+        for item in ['www.youtube.com', 'vimeo.com', 'youtu.be', 'liveleak.com/']:
+            if self.url.find(item) != -1:
+                type="video"
+                
+        return type
+
+
+
 class RedditLoader:
     last_req_time = 0
     retries = 0
@@ -360,8 +376,8 @@ def main():
             for name, posts in subreddit.iteritems():
                 output+= html.tablestart(name.title())
                 for item in posts:
-                    output+= html.item(item.url, item.title.encode('ascii', 'replace'), item.permalink, item.num_comments, item.score, 
-                        '{0:.2f}'.format(item.post_power()), item.hours_ago(), item.subreddit)
+                    output+= html.item(item.url, item.title.encode('ascii', 'replace'), item.permalink, item.num_comments, item.score, '{0:.2f}'.format(item.post_power()), item.hours_ago(), item.subreddit, item.is_self, item.type())
+
                 output+= html.tableend()
 
         #delete those outputs later
