@@ -7,11 +7,11 @@ import datetime
 import math
 import sys
 import glob
-from email.MIMEMultipart import MIMEMultipart
-from email.MIMEBase import MIMEBase
-from email.MIMEText import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email.mime.text import MIMEText
 import config as cfg
-from template import Template
+import template
 import logging
 
 class RedditOpener:
@@ -28,9 +28,7 @@ class RedditOpener:
             return error
 
 class RedditPost:
-
     ref_score = {}
-
 
     def __init__(self, pp_alg = cfg.default_user_cfg['pp_alg'], **data ):
 
@@ -45,7 +43,6 @@ class RedditPost:
         self.created_utc  = data['created_utc']
         self.domain = data['domain']
         self.is_self = data['is_self']
-
         self.pp_alg = pp_alg
 
     def __str__(self):
@@ -55,7 +52,6 @@ class RedditPost:
     @classmethod
     def load_posts(cls, posts_json, pp_alg = cfg.default_user_cfg['pp_alg']):
         return [RedditPost(pp_alg = pp_alg, **post['data']) for post in posts_json ]
-
 
     @classmethod
     def calculate_ref_score(cls, reddit_posts, subreddit = ''):
@@ -71,7 +67,6 @@ class RedditPost:
             raise NotImplementedError('Unknown post_power alghorithm.')
         logging.debug('ref_score for subreddit '+ subreddit + ': ' + str(cls.ref_score[subreddit][pp_alg]) + ' pp_alg: ' + pp_alg)
         return cls.ref_score[subreddit][pp_alg]
-
 
     @classmethod
     def _calculate_ref_score_default(cls, reddit_posts, subreddit = ''):
@@ -121,7 +116,6 @@ class RedditPost:
         return type
 
 
-
 class RedditLoader:
     last_req_time = 0
     retries = 0
@@ -161,8 +155,6 @@ class RedditLoader:
             sys.exit(1)
         else:
             logging.warning('Site returned no posts: {}'.format(json_dct))
-            
-            
             cls.retries += 1
             logging.warning('Retrying last request.... retry count: {}'.format(cls.retries))
             return cls.load_json_from_url(url, delay = delay * cfg.retry_delay_multiplier, cache_refresh_interval = cache_refresh_interval)
@@ -171,12 +163,11 @@ class RedditLoader:
     def build_url(cls, subreddit, site = '', t = '', after = ''):
         if subreddit == '':
             return 'http://www.reddit.com/'
-
         if site == '':
             url = 'http://www.reddit.com/r/' + subreddit + '/.json'
         else:
             url = 'http://www.reddit.com/r/' + subreddit + '/' + site + '/.json'
-
+        
         params = []
 
         if t != '':
@@ -194,7 +185,6 @@ class RedditLoader:
                 url += '&'
 
         return url
-
 
     @classmethod
     def load_subreddit(cls, subreddit, suffix = '', t = '', post_no = cfg.posts_in_json_page, pp_alg = cfg.default_user_cfg['pp_alg']):
@@ -246,13 +236,10 @@ class RedditLoader:
 
             for subreddit in grouplist:
                 top_posts = RedditLoader.load_subreddit(subreddit, ref_cat, ref_t)
-
                 RedditPost.calculate_ref_score(top_posts)
-   
                 posts = RedditLoader.load_subreddit(subreddit, post_no = posts_per_sub)
 
                 for item in posts:
-
 
                     filtered = False
                     if domain_filter != '':
@@ -263,12 +250,11 @@ class RedditLoader:
 
                     if not filtered and (time.time()-item.created_utc) < time_frame and item.post_power() >= pp_treshold: 
                         post_list.append(item)
+
             if post_list:
                 if sort_key != None: post_list.sort(key = sort_key, reverse = reverse_sort_order)
                 output_list.append({';'.join(grouplist) : post_list})
                   
-  
-
         return output_list
 
 class UserCfg:
@@ -365,9 +351,8 @@ def load_configs():
 def main():
 
     userlist = load_configs()
-    html = Template
+    html = template.Template
 
-    
     for user in userlist:
         logging.info('###################### Started processing user: {}'.format(user.username))
         value = RedditLoader.aggregate_subreddits(user = user)
@@ -414,6 +399,6 @@ if __name__ == "__main__":
     logging.getLogger('').addHandler(console)
 
 
-    logging.info('Application started')
+    logging.info('########################## Application started')
     main()
-    logging.info('Application finished')
+    logging.info('########################## Application finished')
