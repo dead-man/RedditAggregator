@@ -54,7 +54,7 @@ class RedditPost:
         return [RedditPost(pp_alg = pp_alg, **post['data']) for post in posts_json ]
 
     @classmethod
-    def calculate_ref_score(cls, reddit_posts, subreddit = ''):
+    def calculate_ref_score(cls, reddit_posts, subreddit = '', pp_alg = cfg.default_user_cfg['pp_alg']):
         if subreddit == '' and len(reddit_posts) > 0:
             subreddit = reddit_posts[0].subreddit
             pp_alg = reddit_posts[0].pp_alg
