@@ -26,7 +26,8 @@ default_user_cfg = {
         'subreddits' : []
     }
 
-
+image_types = ['.jpg', '.png', '.gif', 'imgur.com/', 'media.tumblr.com/']
+video_types = ['www.youtube.com', 'vimeo.com', 'youtu.be', 'liveleak.com/']
 
 ############# CRITICAL VARIABLES, DO NOT MODIFY:#################
 

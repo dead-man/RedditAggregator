@@ -79,7 +79,6 @@ class RedditPost:
         for item in reddit_posts[:3]:
             ref_score += item.score + item.num_comments
         ref_score /= 7.0
-        #cls.ref_score[subreddit] = ref_score
         return ref_score
 
     def post_power(self):
@@ -108,15 +107,15 @@ class RedditPost:
 
     def type(self):
 
-        type=""
+        type=''
 
-        for item in ['.jpg', '.png', '.gif', 'imgur.com/', 'media.tumblr.com/']:
+        for item in cfg.image_types:
             if self.url.find(item) != -1:
-                type="image"
+                type = 'image'
 
-        for item in ['www.youtube.com', 'vimeo.com', 'youtu.be', 'liveleak.com/']:
+        for item in cfg.video_types:
             if self.url.find(item) != -1:
-                type="video"
+                type = 'video'
                 
         return type
 
@@ -325,7 +324,8 @@ def dump_posts_to_json(posts):
         for subreddit, postlist in subreddit_dct.iteritems():
             name += subreddit 
             for item in postlist:
-                post_list.append([item.title, item.url, item.subreddit, item.num_comments, item.score, item.permalink, item.post_power(), item.hours_ago()])
+                post_list.append([item.title, item.url, item.subreddit, item.num_comments, item.score, item.permalink, 
+                    item.post_power(), item.hours_ago()])
         output_list.append({subreddit : post_list})
 
     return json.dumps(output_list, indent = 4)
@@ -376,7 +376,8 @@ def main():
             for name, posts in subreddit.iteritems():
                 output+= html.tablestart(name.title())
                 for item in posts:
-                    output+= html.item(item.url, item.title.encode('ascii', 'replace'), item.permalink, item.num_comments, item.score, '{0:.2f}'.format(item.post_power()), item.hours_ago(), item.subreddit, item.is_self, item.type())
+                    output+= html.item(item.url, item.title.encode('ascii', 'replace'), item.permalink, item.num_comments, 
+                        item.score, '{0:.2f}'.format(item.post_power()), item.hours_ago(), item.subreddit, item.is_self, item.type())
 
                 output+= html.tableend()
 
