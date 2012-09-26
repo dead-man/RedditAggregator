@@ -1,7 +1,7 @@
 {
     "username" : "user1",
     "usr_mail" : "xelnyq@gmail.com",
-    "posts_sort_by" : "num_comments", 
+    "posts_sort_by" : "hours_ago", 
     "posts_sort_order" : "dsc",
     "ref_cat" : "top", 
     "ref_t" : "month", 

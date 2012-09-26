@@ -44,6 +44,13 @@ class RedditPost:
         self.domain = data['domain']
         self.is_self = data['is_self']
         self.pp_alg = pp_alg
+        self.time_of_download = time.time()
+
+        self._pp = None
+        self._ha = None
+        self._tp = None
+        self.hours_ago_int = int(math.ceil((self.time_of_download - self.created_utc) / 3600))
+
 
     def __str__(self):
         return u'title: {} - score: {} - posted: {} hours ago - post_power: {}'.format(self.title, 
@@ -55,8 +62,9 @@ class RedditPost:
 
     @classmethod
     def calculate_ref_score(cls, reddit_posts, subreddit = '', pp_alg = cfg.default_user_cfg['pp_alg']):
-        if subreddit == '' and len(reddit_posts) > 0:
-            subreddit = reddit_posts[0].subreddit
+        if len(reddit_posts) > 0:
+            if subreddit == '':
+                subreddit = reddit_posts[0].subreddit
             pp_alg = reddit_posts[0].pp_alg
 
         cls.ref_score[subreddit] = {}
@@ -78,12 +86,18 @@ class RedditPost:
         return ref_score
 
     def post_power(self):
+        if self.subreddit not in self.ref_score:
+            raise RuntimeError('Invalid state: call calculate_ref_score() BEFORE post_power()')
+        if self._pp != None: return self._pp
+
+       
         if self.pp_alg == 'default':
-            return self._post_power_default()
+             self._pp = self._post_power_default()
         else:
             raise NotImplementedError('Unknown post_power alghorithm.')
 
-
+        return self._pp
+        
     def _post_power_default(self):
         ago = (time.time() - self.created_utc) / 3600
         postscore = self.score + self.num_comments
@@ -91,7 +105,9 @@ class RedditPost:
         return pp
 
     def hours_ago(self):
-        ago = int(math.ceil((time.time() - self.created_utc) / 3600))
+        if self._ha != None: return self._ha
+
+        ago = self.hours_ago_int# int(math.ceil((self.time_of_download - self.created_utc) / 3600))
 
         if ago==1:
             hr="hour"
@@ -99,10 +115,13 @@ class RedditPost:
             hr="hours"
 
         string = "%r %s ago" % (ago, hr)
+        self._ha = string
         return string
 
-    def type(self):
+    
 
+    def type(self):
+        if self._tp != None: return self._tp
         type=''
 
         for item in cfg.image_types:
@@ -112,7 +131,7 @@ class RedditPost:
         for item in cfg.video_types:
             if self.url.find(item) != -1:
                 type = 'video'
-                
+        self._tp = type        
         return type
 
 
@@ -292,7 +311,7 @@ class UserCfg:
         elif self.posts_sort_by == 'post_power':
             self.sort_key = lambda post: post.post_power()
         elif self.posts_sort_by == 'hours_ago':
-            self.sort_key = lambda post: post.hours_ago()
+            self.sort_key = lambda post: post.hours_ago_int
         else:
             self.sort_key = None
 
@@ -348,6 +367,31 @@ def load_configs():
     logging.info('Finished loading user configs')   
     return configs
 
+def build_html(value, html, user):
+    output=''
+    
+    output+= html.head()
+    #text = dump_posts_to_json(value)
+    #print text
+    
+    for subreddit in value:
+        for name, posts in subreddit.iteritems():
+            output+= html.tablestart(' | '.join(name.title().split(';')))
+            for item in posts:
+                output+= html.item(item.url, item.title.encode('ascii', 'replace'), item.permalink.encode('ascii', 'replace'), item.num_comments, 
+                    item.score, '{0:.2f}'.format(item.post_power()), item.hours_ago(), item.subreddit, item.is_self, item.type())
+
+            output+= html.tableend()
+
+    #delete those outputs later
+    output+= '<hr></hr><p>' + 'Username: ' + user.username + '</p>'
+    output+= '<p>' + 'Post Power threshold: ' + str(user.pp_treshold) + '</p>'
+    output+= '<p>' + 'Sorted by: ' + user.posts_sort_by + '</p>'
+    ##########
+
+    return output
+
+
 def main():
 
     userlist = load_configs()
@@ -355,27 +399,10 @@ def main():
 
     for user in userlist:
         logging.info('###################### Started processing user: {}'.format(user.username))
+        
         value = RedditLoader.aggregate_subreddits(user = user)
-        output=''
         
-        output+= html.head()
-        #text = dump_posts_to_json(value)
-        #print text
-        
-        for subreddit in value:
-            for name, posts in subreddit.iteritems():
-                output+= html.tablestart(name.title())
-                for item in posts:
-                    output+= html.item(item.url, item.title.encode('ascii', 'replace'), item.permalink, item.num_comments, 
-                        item.score, '{0:.2f}'.format(item.post_power()), item.hours_ago(), item.subreddit, item.is_self, item.type())
-
-                output+= html.tableend()
-
-        #delete those outputs later
-        output+= '<hr></hr><p>' + 'Username: ' + user.username + '</p>'
-        output+= '<p>' + 'Post Power threshold: ' + str(user.pp_treshold) + '</p>'
-        output+= '<p>' + 'Sorted by: ' + user.posts_sort_by + '</p>'
-        ##########
+        output = build_html(value, html, user)
 
         f = open(user.username + '.html', 'w+')
         f.write(output)
