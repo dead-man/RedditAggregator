@@ -7,6 +7,7 @@ import datetime
 import math
 import sys
 import glob
+import this
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText

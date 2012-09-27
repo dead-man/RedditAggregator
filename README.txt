@@ -2,11 +2,15 @@ Reddit Aggregator v0.9
 
 
 TODO:
-- na pewno zostala jeszcze kupa rzeczy do zrobienia
 - exceptions logging to file
+- reversed (inclusive/exclusive) domain filter
+- more power post algorithms
+- correct time frame calculation for post filtering
+- configuration correctness chcecking
+- logging errors to mail message
 
 
-ISSUES
+ISSUES:
 - application hangs up when network interface is turned of during operation
 - logging system crashes the application when no free space left on a disk. see (1)
 - application crashes when network cable is pulled off during operation. see (2)
