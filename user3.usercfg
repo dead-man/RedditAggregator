@@ -1,21 +1,23 @@
 #{
-    "username" : "user3",
+    "username" : "Ciepiel_Long_reads",
     "usr_mail" : "xelnyq@gmail.com",
     "posts_sort_by" : "post_power", 
     "posts_sort_order" : "dsc",
-    "posts_per_sub" : 25 , 
+    "posts_per_sub" : 50 , 
     "pp_treshold" : 0.2,
     "domain_filter" : "",
     "subreddits" : 
-        [["advertising", "Blogging", "Design", "writing", "marketing", "SEO", "webhosting", "webdesign", 
-            "web_design", "Wordpress", "windows", "webmarketing", "socialmedia"], 
-        ["Entrepreneur", "business", "financialindependence", "freelance", "SocialEngineering", "netsec", "startups", 
-            "smallbusiness", "SomebodyMakeThis"], 
-        ["Economics", "economy", "finance", "BehavioralEconomics", "collapse"], 
-        ["learnprogramming", "learnpython", "programming", "ProgrammingLanguages", "Python", "compsci", "webdev", "coding"], 
-        ["books", "booksuggestions", "literature"], ["GetMotivated", "productivity", "selfimprovement", "minimalism", 
-            "simpleliving", "ZenHabits", "Buddhism"], 
+        [["dailydot", "tldr", "subredditoftheday"], 
+        ["Foodforthought", "Freethought", "InsightfulQuestions", "longtext", "TMBR", "criticism", "skeptic", 
+            "TrueReddit", "TrueTrueReddit", "modded", "MetaTrueReddit", "TrueAtheism"],
+        ["philosophy", "PhilosophyofReligion", "PhilosophyofScience", "fuckingphilosophy", "neurophilosophy"],  
         ["bestof", "defaultgems", "TrueDepthHub", "truebestof", "DepthHub", "MethodHub"], 
-        ["dailydot", "tldr", "subredditoftheday"]]
-  
+        ["malefashionadvice", "MensRights", "Equality", "relationship_advice", "TwoXChromosomes", "sex"], 
+        ["askscience", "explainlikeimfive", "science", "TrueAskReddit",  "RedditThroughHistory"], 
+        ["lifehacks", "LifeProTips", "todayilearned"], 
+        ["books", "booksuggestions", "literature"], 
+        ["NeutralPolitics", "worldevents", "worldnews", "worldpolitics", "news", "moderatepolitics", "offbeat"], 
+        ["psychology", "cogsci", "cognitivelinguistics", "neuro", "Neuropsychology"], 
+        ["poland", "Polska"], 
+        ["blog", "announcements"]]
 }
