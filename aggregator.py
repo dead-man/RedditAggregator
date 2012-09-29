@@ -379,8 +379,9 @@ def build_html(value, html, user):
         for name, posts in subreddit.iteritems():
             output+= html.tablestart(' | '.join(name.title().split(';')))
             for item in posts:
-                output+= html.item(item.url, item.title.encode('ascii', 'replace'), item.permalink.encode('ascii', 'replace'), item.num_comments, 
-                    item.score, '{0:.2f}'.format(item.post_power()), item.hours_ago(), item.subreddit, item.is_self, item.type())
+                output+= html.item(item.url.encode('ascii', 'replace'), item.title.encode('ascii', 'replace'), 
+                    item.permalink.encode('ascii', 'replace'), item.num_comments, item.score, 
+                    '{0:.2f}'.format(item.post_power()), item.hours_ago(), item.subreddit, item.is_self, item.type())
 
             output+= html.tableend()
 

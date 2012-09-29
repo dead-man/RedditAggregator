@@ -14,7 +14,7 @@ ISSUES:
 - application hangs up when network interface is turned of during operation
 - logging system crashes the application when no free space left on a disk. see (1)
 - application crashes when network cable is pulled off during operation. see (2)
-- links cointaining unicode crashes application (current workaround: ascii encoding: no crash, but link is unusable). see (3)
+- links and post titles cointaining unicode crashes application (current workaround: ascii encoding: no crash, but link is unusable). see (3)
 - application crashes during some of network problems. conditions for error reproduction should be further examined. see (4)
 
 
@@ -82,12 +82,15 @@ urllib2.URLError: <urlopen error [Errno 10065] Prˇba przeprowadzenia operacji, 
 
 (3)
 
-only permalinks (and titles) seems to be the problem
+only urls, permalinks and titles seem to be the problem
 
 "permalink": "/r/aww/comments/10h8by/\u3147\u3145\u3147/"
 http://reddit.com/r/aww/comments/10h8by/%C5%83%C5%AF%C3%A7%C5%83%C5%AF%C5%AF%C5%83%C5%AF%C3%A7/  # <- probably the desired form
 http://reddit.com/r/aww/comments/10h8by/ŃůçŃůůŃůç/
 
+http://www.reddit.com/r/todayilearned/comments/10mm5g/til_the_language_of_piraha_has_so_few_consonants/
+"url": "http://en.wikipedia.org/wiki/Pirah\u00e3_people#section_2"
+http://en.wikipedia.org/wiki/Pirah%C3%A3_people#section_2
 
 Traceback (most recent call last):
   File "C:\Users\marcin\Documents\GitHub\RedditAggregator\aggregator.py", line 430, in <module>
