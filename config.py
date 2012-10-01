@@ -17,7 +17,7 @@ default_user_cfg = {
         'username' : 'defaultuser',
         'usr_mail' : '',
         'gmail_login_user' : 'raggregator@gmail.com',
-        'gmail_login_pwd' : 'secret',
+        'gmail_login_pwd' : 'test',
         'subject_tmpl' : 'Reddit Aggregator\'s news for {date}',
         'posts_sort_by' : 'None', 'posts_sort_order' : 'dsc',
         'ref_cat' : 'top', 'ref_t' : 'month', 'posts_per_sub' : 25 , 'time_frame' : 90000, 'pp_treshold' : 0.5,

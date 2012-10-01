@@ -5,9 +5,12 @@
     "posts_sort_order" : "dsc",
     "posts_per_sub" : 50 , 
     "pp_treshold" : 0.2,
+    "subject_tmpl" : "Long Reads",
     "domain_filter" : "",
     "subreddits" : 
         [["dailydot", "tldr", "subredditoftheday"], 
+        ["quotes", "lists", "dataisbeautiful", "Buddhism", "Infographics"], 
+        ["shutupandtakemymoney", "gadgets", "BuyItForLife", "GoodValue"], 
         ["Foodforthought", "Freethought", "InsightfulQuestions", "longtext", "TMBR", "criticism", "skeptic", 
             "TrueReddit", "TrueTrueReddit", "modded", "MetaTrueReddit", "TrueAtheism"],
         ["philosophy", "PhilosophyofReligion", "PhilosophyofScience", "fuckingphilosophy", "neurophilosophy"],  
@@ -18,6 +21,7 @@
         ["books", "booksuggestions", "literature"], 
         ["NeutralPolitics", "worldevents", "worldnews", "worldpolitics", "news", "moderatepolitics", "offbeat"], 
         ["psychology", "cogsci", "cognitivelinguistics", "neuro", "Neuropsychology"], 
+        ["classicalmusic"],
         ["poland", "Polska"], 
         ["blog", "announcements"]]
 }

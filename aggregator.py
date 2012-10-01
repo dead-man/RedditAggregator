@@ -342,7 +342,7 @@ def mail(to, subject, text, gmail_user, gmail_pwd):
    msg['From'] = gmail_user
    msg['To'] = to
    msg['Subject'] = subject
-   msg.attach(MIMEText(text))
+   msg.attach(MIMEText(text, 'html'))
    mailServer = smtplib.SMTP(cfg.gmail_smtp_server, cfg.gmail_smtp_port)
    mailServer.ehlo()
    mailServer.starttls()
@@ -384,13 +384,7 @@ def build_html(value, html, user):
                     '{0:.2f}'.format(item.post_power()), item.hours_ago(), item.subreddit, item.is_self, item.type())
 
             output+= html.tableend()
-
-    #delete those outputs later
-    output+= '<hr></hr><p>' + 'Username: ' + user.username + '</p>'
-    output+= '<p>' + 'Post Power threshold: ' + str(user.pp_treshold) + '</p>'
-    output+= '<p>' + 'Sorted by: ' + user.posts_sort_by + '</p>'
-    ##########
-
+    output+= html.tail()
     return output
 
 
@@ -405,14 +399,13 @@ def main():
         value = RedditLoader.aggregate_subreddits(user = user)
         
         output = build_html(value, html, user)
-
+        #output = output.decode("utf-8")
+        #output = output.encode("utf-8")
         f = open(user.username + '.html', 'w+')
         f.write(output)
         f.close()
 
-        # TEMPORARILY commented out
-        # mail(user.usr_mail, user.subject_tmpl.format(date = datetime.datetime.now().strftime("%d-%m-%Y")), text, 
-        #     user.gmail_login_user, user.gmail_login_pwd)
+        #mail(user.usr_mail, user.subject_tmpl.format(date = datetime.datetime.now().strftime("%d-%m-%Y")), output, user.gmail_login_user, user.gmail_login_pwd)
        
 
 
