@@ -16,8 +16,8 @@ ISSUES:
 - application crashes when network cable is pulled off during operation. see (2)
 - links and post titles cointaining unicode crashes application (current workaround: ascii encoding: no crash, but link is unusable). see (3)
 - application crashes during some of network problems. conditions for error reproduction should be further examined. see (4)
-
-
+- memory exhaustion causes application to crash. see (5) 
+- in some cases httplib raises IncompleteRead error and crashes application. error circumstances are unknown. see (6)
 
 
 
@@ -129,4 +129,58 @@ Traceback (most recent call last):
    data = self._sock.recv(left)
 socket.error: [Errno 10054] An existing connection was forcibly closed by the remote host
 [Finished in 584.3s with exit code 1]
+
+
+(5)
+
+need to identify code fragments that commit to filling up memory, and free it up manualy in case of error
+
+
+Traceback (most recent call last):
+ File "aggregator.py", line 425, in <module>
+   main()
+ File "aggregator.py", line 399, in main
+   value = RedditLoader.aggregate_subreddits(user = user)
+ File "aggregator.py", line 258, in aggregate_subreddits
+   top_posts = RedditLoader.load_subreddit(subreddit, ref_cat, ref_t)
+ File "aggregator.py", line 211, in load_subreddit
+   posts = cls.load_json_from_url(cls.build_url(subreddit, site = suffix, t = t))
+ File "aggregator.py", line 162, in load_json_from_url
+   json_message = response.read()
+ File "/usr/lib/python2.7/socket.py", line 358, in read
+   buf.write(data)
+MemoryError: out of memory
+
+
+(6)
+
+2012-10-01 21:12:26,340  INFO     Site responded with HTTP code: 200
+2012-10-01 21:12:26,777  INFO     Requesting url http://www.reddit.com/r/dailydo t/.json 2012-10-01 21:12:28,384  INFO     Site responded with HTTP code: 200
+2012-10-01 21:12:28,778  INFO     Requesting url http://www.reddit.com/r/dailydo t/.json?after=t3_z2n44 2012-10-01 21:12:30,753  INFO     Site responded with HTTP code: 200
+2012-10-01 21:12:31,775  INFO     Requesting url http://www.reddit.com/r/tldr/to p/.json?t=month 2012-10-01 21:12:32,724  INFO     Site responded with HTTP code: 200
+2012-10-01 21:12:33,776  INFO     Requesting url http://www.reddit.com/r/tldr/.j
+son
+2012-10-01 21:12:34,834  INFO     Site responded with HTTP code: 200
+2012-10-01 21:12:35,777  INFO     Requesting url http://www.reddit.com/r/tldr/.j son?after=t3_xu4el 2012-10-01 21:12:37,420  INFO     Site responded with HTTP code: 200
+Traceback (most recent call last):
+ File "aggregator.py", line 425, in <module>
+   main()
+ File "aggregator.py", line 399, in main
+   value = RedditLoader.aggregate_subreddits(user = user)
+ File "aggregator.py", line 260, in aggregate_subreddits
+   posts = RedditLoader.load_subreddit(subreddit, post_no = posts_per_sub)
+ File "aggregator.py", line 218, in load_subreddit
+   next_site = cls.load_json_from_url(cls.build_url(subreddit, site = suffix, t
+= t, after = last_post_id))
+ File "aggregator.py", line 162, in load_json_from_url
+   json_message = response.read()
+ File "/usr/lib/python2.7/socket.py", line 351, in read
+   data = self._sock.recv(rbufsize)
+ File "/usr/lib/python2.7/httplib.py", line 541, in read
+   return self._read_chunked(amt)
+ File "/usr/lib/python2.7/httplib.py", line 586, in _read_chunked
+   raise IncompleteRead(''.join(value))
+httplib.IncompleteRead: IncompleteRead(2316 bytes read)
+r@server:~/RedditAggregator$
+
 
