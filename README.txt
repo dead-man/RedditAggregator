@@ -1,7 +1,8 @@
-Reddit Aggregator v0.9
+# Reddit Aggregator v0.9
 
 
-TODO:
+TODO
+----
 - exceptions logging to file
 - reversed (inclusive/exclusive) domain filter
 - more power post algorithms
@@ -10,19 +11,24 @@ TODO:
 - logging errors to mail message
 
 
-ISSUES:
-- application hangs up when network interface is turned of during operation
-- logging system crashes the application when no free space left on a disk. see (1)
-- application crashes when network cable is pulled off during operation. see (2)
-- links and post titles cointaining unicode crashes application (current workaround: ascii encoding: no crash, but link is unusable). see (3)
-- application crashes during some of network problems. conditions for error reproduction should be further examined. see (4)
-- memory exhaustion causes application to crash. see (5) 
+ISSUES
+------
+#### NETWORK RELATED:
+- application hangs up when network conection is lost after sending request but before recieving reply
 - in some cases httplib raises IncompleteRead error and crashes application. error circumstances are unknown. see (6)
+- application crashes during some of network problems. conditions for error reproduction should be further examined. see (4)
+
+#### OTHER:
+- logging system crashes the application when no free space left on a disk. see (1)
+- links and post titles cointaining unicode crashes application (current workaround: ascii encoding: no crash, but link is unusable). see (3)
+- memory exhaustion causes application to crash. see (5) 
 
 
+-------------------------------------------------------------------------------------------------------
 
 
 (1)
+---
 
 2012-09-26 12:58:13,635  INFO     Requesting url http://www.reddit.com/r/cogsci/top/.json?t=month
 2012-09-26 12:58:14,161  INFO     Site responded with HTTP code: 200
@@ -51,36 +57,9 @@ IOError: [Errno 28] No space left on device
 
 
 
-(2)
-
-Traceback (most recent call last):
-  File "C:\Users\marcin\Documents\GitHub\RedditAggregator\aggregator.py", line 430, in <module>
-    main()
-  File "C:\Users\marcin\Documents\GitHub\RedditAggregator\aggregator.py", line 403, in main
-    value = RedditLoader.aggregate_subreddits(user = user)
-  File "C:\Users\marcin\Documents\GitHub\RedditAggregator\aggregator.py", line 257, in aggregate_subreddits
-    top_posts = RedditLoader.load_subreddit(subreddit, ref_cat, ref_t)
-  File "C:\Users\marcin\Documents\GitHub\RedditAggregator\aggregator.py", line 210, in load_subreddit
-    posts = cls.load_json_from_url(cls.build_url(subreddit, site = suffix, t = t))
-  File "C:\Users\marcin\Documents\GitHub\RedditAggregator\aggregator.py", line 158, in load_json_from_url
-    response = cls.opener.open(url)
-  File "C:\Users\marcin\Documents\GitHub\RedditAggregator\aggregator.py", line 26, in open
-    return self.opener.open(url)
-  File "C:\Python27\lib\urllib2.py", line 394, in open
-    response = self._open(req, data)
-  File "C:\Python27\lib\urllib2.py", line 412, in _open
-    '_open', req)
-  File "C:\Python27\lib\urllib2.py", line 372, in _call_chain
-    result = func(*args)
-  File "C:\Python27\lib\urllib2.py", line 1199, in http_open
-    return self.do_open(httplib.HTTPConnection, req)
-  File "C:\Python27\lib\urllib2.py", line 1174, in do_open
-    raise URLError(err)
-urllib2.URLError: <urlopen error [Errno 10065] Prˇba przeprowadzenia operacji, wykonywanej przez gniazdo, na nieosi╣galnym hoťcie>
-[Finished in 31.2s with exit code 1]
-
 
 (3)
+---
 
 only urls, permalinks and titles seem to be the problem
 
@@ -105,6 +84,7 @@ UnicodeEncodeError: 'ascii' codec can't encode characters in position 40-42: ord
 
 
 (4)
+---
 
 Traceback (most recent call last):
  File "C:\Users\bakemono\Dropbox\python\helper\RedditAggregator\aggregator.py", line 403, in <module>
@@ -132,6 +112,7 @@ socket.error: [Errno 10054] An existing connection was forcibly closed by the re
 
 
 (5)
+---
 
 need to identify code fragments that commit to filling up memory, and free it up manualy in case of error
 
@@ -153,6 +134,7 @@ MemoryError: out of memory
 
 
 (6)
+---
 
 2012-10-01 21:12:26,340  INFO     Site responded with HTTP code: 200
 2012-10-01 21:12:26,777  INFO     Requesting url http://www.reddit.com/r/dailydo t/.json 2012-10-01 21:12:28,384  INFO     Site responded with HTTP code: 200
