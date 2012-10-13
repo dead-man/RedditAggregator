@@ -23,10 +23,8 @@ class RedditOpener:
         self.opener.addheaders = [('User-agent', self.user_agent)]
 
     def open(self, url):
-        try:
             return self.opener.open(url)
-        except urllib2.HTTPError as error:
-            return error
+
 
 class RedditPost:
     ref_score = {}
@@ -156,12 +154,23 @@ class RedditLoader:
             time.sleep(time_required - time_elapsed_since_last_req)
         logging.info('Requesting url {}'.format(url))
         cls.last_req_time = time.time()
-        response = cls.opener.open(url)
-        logging.info('Site responded with HTTP code: {}'.format(response.getcode()))
 
-        json_message = response.read()
-        logging.debug('Message recieved: {}'.format(json_message))
-        json_dct = json.loads(json_message)
+        try:
+            response = cls.opener.open(url)
+        except urllib2.HTTPError as error:
+            logging.error('Site responded with unhandled HTTP error code: {}'.format(error.code))
+            json_dct = {}
+        except urllib2.URLError as error: 
+            logging.error('Request failed to reach a server. Reason: {}'.format(error.reason))
+            json_dct = {}
+        except:
+            logging.error('Unexpected error from urllib2:', sys.exc_info()[0])
+            raise
+        else:
+            logging.info('Site responded with HTTP code: {}'.format(response.code))
+            json_message = response.read()
+            logging.debug('Message recieved: {}'.format(json_message))
+            json_dct = json.loads(json_message)
 
         if 'data' in json_dct and 'children' in json_dct['data']:
             cls.retries = 0
@@ -174,7 +183,7 @@ class RedditLoader:
             logging.error('max_retries exceeded... exiting')
             sys.exit(1)
         else:
-            logging.warning('Site returned no posts: {}'.format(json_dct))
+            logging.info('Response cointained no posts: {}'.format(json_dct))
             cls.retries += 1
             logging.warning('Retrying last request.... retry count: {}'.format(cls.retries))
             return cls.load_json_from_url(url, delay = delay * cfg.retry_delay_multiplier, cache_refresh_interval = cache_refresh_interval)
@@ -349,7 +358,7 @@ def mail(to, subject, text, gmail_user, gmail_pwd):
    mailServer.ehlo()
    mailServer.login(gmail_user, gmail_pwd)
    mailServer.sendmail(gmail_user, to, msg.as_string())
-   mailServer.close()
+   mailServer.quit()
 
    logging.info('Email sent to: {}'.format(to))
 
