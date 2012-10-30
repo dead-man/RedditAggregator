@@ -100,7 +100,9 @@ class RedditPost:
     def _post_power_default(self):
         ago = (time.time() - self.created_utc) / 3600
         postscore = self.score + self.num_comments
-        pp = (25 / ago) * postscore / self.ref_score[self.subreddit][self.pp_alg]
+        pp = (25 / ago * postscore / self.ref_score[self.subreddit][self.pp_alg])
+
+
         return pp
 
     def hours_ago(self):
@@ -395,15 +397,18 @@ def build_html(value, html, user):
     #text = dump_posts_to_json(value)
     #print text
     
+    num=0
     for subreddit in value:
         for name, posts in subreddit.iteritems():
-            output+= html.tablestart(' | '.join(name.title().split(';')))
+
+            output+= html.tablestart(' | '.join(name.title().split(';')), num)
             for item in posts:
                 output+= html.item(item.url.encode('ascii', 'replace'), item.title.encode('ascii', 'replace'), 
                     item.permalink.encode('ascii', 'replace'), item.num_comments, item.score, 
                     '{0:.2f}'.format(item.post_power()), item.hours_ago(), item.subreddit, item.is_self, item.type())
 
             output+= html.tableend()
+            num+=1
     return output
 
 
