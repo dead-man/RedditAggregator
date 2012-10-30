@@ -1,14 +1,14 @@
 {
     "username" : "user1",
     "usr_mail" : "xelnyq@gmail.com",
-    "posts_sort_by" : "hours_ago", 
+    "posts_sort_by" : "post_power", 
     "posts_sort_order" : "dsc",
     "ref_cat" : "top", 
     "ref_t" : "month", 
     "subject_tmpl" : "test",
     "posts_per_sub" : 25 , 
     "time_frame" : 90000, 
-    "pp_treshold" : 0.3,
-    "subreddits" : ["videos", "aww"]
+    "pp_treshold" : 0.2,
+    "subreddits" : [["android","dealsreddit"], ["askreddit", "philosophy"]]
     
 }

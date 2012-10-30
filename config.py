@@ -23,6 +23,7 @@ default_user_cfg = {
         'ref_cat' : 'top', 'ref_t' : 'month', 'posts_per_sub' : 25 , 'time_frame' : 90000, 'pp_treshold' : 0.5,
         'pp_alg' : 'default',
         'domain_filter' : '',
+        'reverse_domain_filter' : '',
         'subreddits' : []
     }
 

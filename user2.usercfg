@@ -1,11 +1,10 @@
 #{
-    "username" : "Ciepiel_Tech_News",
+    "username" : "Ciepiel2",
     "usr_mail" : "xelnyq@gmail.com",
     "posts_sort_by" : "post_power", 
     "posts_sort_order" : "dsc",
     "posts_per_sub" : 50 , 
     "pp_treshold" : 0.2,
-    "subject_tmpl" : "Tech News",
     "domain_filter" : "reddit.com",
     "subreddits" : 
         [["technology"], 
@@ -13,7 +12,7 @@
         ["Economics", "economy", "finance", "BehavioralEconomics", "collapse"], 
         ["advertising", "Blogging", "Design", "writing", "marketing", "SEO", "webhosting", "webdesign", 
             "web_design", "Wordpress", "windows", "webmarketing", "socialmedia"], 
-        ["learnprogramming", "learnpython", "programming", "ProgrammingLanguages", "Python", "compsci", "webdev", "coding"], 
-        ["GetMotivated", "productivity", "selfimprovement", "minimalism", "simpleliving", "ZenHabits"], 
+        ["learnprogramming", "learnpython", "programming", "ProgrammingLanguages", "Python", "compsci", "webdev", "coding", "node"], 
+        ["GetMotivated", "productivity", "selfimprovement", "minimalism", "simpleliving", "ZenHabits"],
         ["aww", "videos"]]
 }

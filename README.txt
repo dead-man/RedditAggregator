@@ -4,7 +4,6 @@
 TODO
 ----
 - exceptions logging to file
-- reversed (inclusive/exclusive) domain filter
 - more power post algorithms
 - correct time frame calculation for post filtering
 - configuration correctness chcecking

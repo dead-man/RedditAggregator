@@ -5,7 +5,6 @@
     "posts_sort_order" : "dsc",
     "posts_per_sub" : 50 , 
     "pp_treshold" : 0.2,
-    "subject_tmpl" : "Long Reads",
     "domain_filter" : "",
     "subreddits" : 
         [["dailydot", "tldr", "subredditoftheday"], 
@@ -23,5 +22,6 @@
         ["psychology", "cogsci", "cognitivelinguistics", "neuro", "Neuropsychology"], 
         ["classicalmusic"],
         ["poland", "Polska"], 
-        ["blog", "announcements"]]
+        ["blog", "announcements"],
+        ["android", "nexus7", "androidapps", "androidgaming"]]
 }

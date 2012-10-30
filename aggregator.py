@@ -237,7 +237,8 @@ class RedditLoader:
         pp_treshold = cfg.default_user_cfg['pp_treshold'], 
         sort_key = None, reverse_sort_order = True, 
         pp_alg = cfg.default_user_cfg['pp_alg'] , 
-        domain_filter = cfg.default_user_cfg['domain_filter']):
+        domain_filter = cfg.default_user_cfg['domain_filter'] , 
+        reverse_domain_filter = cfg.default_user_cfg['reverse_domain_filter']):
 
         if user != None:
             reddit_list = user.subreddits 
@@ -250,6 +251,7 @@ class RedditLoader:
             reverse_sort_order = user.reverse_sort_order
             pp_alg = user.pp_alg
             domain_filter = user.domain_filter
+            reverse_domain_filter = user.reverse_domain_filter
 
 
         output_list = []
@@ -270,12 +272,20 @@ class RedditLoader:
 
                 for item in posts:
 
+                    
                     filtered = False
                     if domain_filter != '':
                         for expr in domain_filter.split(cfg.domain_filter_spliter):  
                             if item.domain.find(expr) != -1: 
                                 filtered = True
                                 break
+
+                    if not filtered and reverse_domain_filter != '':
+                        for expr in reverse_domain_filter.split(cfg.domain_filter_spliter):  
+                            if item.domain.find(expr) != -1 : break
+                        else:
+                            filtered = True
+
 
                     if not filtered and (time.time()-item.created_utc) < time_frame and item.post_power() >= pp_treshold: 
                         post_list.append(item)
@@ -308,6 +318,7 @@ class UserCfg:
         self.pp_treshold = usercfg['pp_treshold']
         self.pp_alg = usercfg['pp_alg']
         self.domain_filter = usercfg['domain_filter']
+        self.reverse_domain_filter = usercfg['reverse_domain_filter']
         self.subreddits = usercfg['subreddits']
 
         self.posts_sort_by = usercfg['posts_sort_by']
@@ -393,7 +404,6 @@ def build_html(value, html, user):
                     '{0:.2f}'.format(item.post_power()), item.hours_ago(), item.subreddit, item.is_self, item.type())
 
             output+= html.tableend()
-    output+= html.tail()
     return output
 
 
