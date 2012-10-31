@@ -37,7 +37,7 @@ class Template:
 <th scope=col>Comments</th>\n\
 <th scope=col>Score</th>\n\
 <th scope=col>Post Power</th>\n\
-<th scope=col>Posted</th>\n\
+<th scope=col>Hours Ago</th>\n\
 <th scope=col>Subreddit</th>\n\
         </tr></thead><tbody>" % (num, num2, name)
         return tablestart
@@ -48,15 +48,11 @@ class Template:
         return tableend
 
     @classmethod
-    def head(cls, num, subname):
+    def head(cls, tabs, subnames):
 
         import datetime
 
         head = "<head><style type=\"text/css\">\n\
-#tb0, #tb1, #tb2, #tb3, #tb4, #tb5, #tb6, #tb7, #tb8, #tb9 { font-family: \"Lucida Sans Unicode\", \"Lucida Grande\", Sans-Serif; font-size: 12px; background: #fff; margin: 5px; width: 95%; border-collapse: collapse; text-align: left; }\n\
-#tb0 th, #tb1 th,  #tb2 th, #tb3 th,  #tb4 th, #tb5 th,  #tb6 th, #tb7 th,  #tb8 th, #tb9 th  { font-size: 14px; font-weight: normal; color: #039; padding: 10px 8px; border-bottom: 2px solid #6678b1; }\n\
-#tb0 td, #tb1 td, #tb2 td, #tb3 td, #tb4 td, #tb5 td, #tb6 td, #tb7 td, #tb8 td, #tb9 td  { color: #669; padding: 3px 8px 3px 8px; width:8%; vertical-align:middle}\n\
-#tb0 tbody tr:hover td, #tb1 tbody tr:hover td, #tb2 tbody tr:hover td, #tb3 tbody tr:hover td, #tb4 tbody tr:hover td, #tb5 tbody tr:hover td, #tb6 tbody tr:hover td, #tb7 tbody tr:hover td, #tb8 tbody tr:hover td, #tb9 tbody tr:hover td  { background-color: #d6d9fb; }\n\
 a {text-decoration:none}\n\
 table.tablesorter thead tr .header {background-image: url(img/bg.gif);background-repeat: no-repeat;background-position: center right;cursor: pointer;}\n\
 table.tablesorter thead tr .headerSortUp {background-image: url(img/asc.gif);}\n\
@@ -136,15 +132,53 @@ $(document).ready(function(){\n\
     });\n\
 });\n\
 </script>\n\
-</head>\n"
+<link href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>\n"
 
-        head += "<p>{}</p>".format(datetime.datetime.now().strftime("%A, %d/%m/%y"))
+        ####################fucked up beyond recognition CSS multiple table sorting fix####################
+
+        c1="#tb0"
+        c2="#tb0 th"
+        c3="#tb0 td"
+        c4="#tb0 tbody tr:hover td"
+
+        if tabs>1:
+            for i in range(1,tabs):
+                c1+=", #tb{}".format(i)
+                c2+=", #tb{} th".format(i)
+                c3+=", #tb{} td".format(i)
+                c4+=", #tb{} tbody tr:hover td".format(i)
+
+        css = "{0} {{ font-family: \"Lucida Sans Unicode\", \"Lucida Grande\", Sans-Serif; font-size: 12px; background: #fff; margin: 5px; width: 95%; border-collapse: collapse; text-align: left; }}\n\
+{1} {{ font-size: 14px; font-weight: normal; color: #039; padding: 10px 8px; border-bottom: 2px solid #6678b1; }}\n\
+{2} {{ color: #669; padding: 3px 8px 3px 8px; width:8%; vertical-align:middle}}\n\
+{3} {{ background-color: #d6d9fb; }}\n".format(c1, c2, c3, c4)
+
+        head += "<style type=\"text/css\">\n"
+
+        head += css
+
+        head += "</style>"
+
+        ###################################################################################################
+
+        head += "</head>\n"
+
+
+
+
+        s1=subnames[0].split(';')[0].capitalize()
 
         head += "<div id=tabs_container>\n\
     <ul id=tabs>\n\
-        <li class=active><a href=#tab0>Tab</a></li>\n\
-        <li><a href=#tab1>Tab</a></li>\n\
-        <li><a href=#tab2>Tab</a></li>\n\
-    </ul></div>"
+        <li class=active><a href=#tab0>{}</a></li>".format(s1)
+
+        if tabs>1:
+            j=1
+            for i in range(1,tabs):
+                j = subnames[i].split(';')[0].capitalize()
+                head += "<li><a href=#tab{0}>{1}</a></li>\n".format(i, j)
+
+        head += "</ul></div>"
+        head += "<p align=right style=\"font-family: 'Ubuntu', sans-serif; position:absolute; top:-10px; right:20px;\">{}</p>".format(datetime.datetime.now().strftime("%A, %d/%m/%y"))
 
         return head

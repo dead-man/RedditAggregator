@@ -110,12 +110,8 @@ class RedditPost:
 
         ago = self.hours_ago_int# int(math.ceil((self.time_of_download - self.created_utc) / 3600))
 
-        if ago==1:
-            hr="hour"
-        else:
-            hr="hours"
 
-        string = "%r %s ago" % (ago, hr)
+        string = "%r" % (ago)
         self._ha = string
         return string
 
@@ -393,14 +389,21 @@ def load_configs():
 def build_html(value, html, user):
     output=''
     
-    output+= html.head()
-    #text = dump_posts_to_json(value)
-    #print text
-    
+    tabs=0
+    for subreddit in value:
+        tabs+=1
+
+    subnames=[]
+    for subreddit in value:
+        for name, posts in subreddit.iteritems():
+            subnames.append(name)
+
+
+    output+= html.head(tabs, subnames)
+
     num=0
     for subreddit in value:
         for name, posts in subreddit.iteritems():
-
             output+= html.tablestart(' | '.join(name.title().split(';')), num)
             for item in posts:
                 output+= html.item(item.url.encode('ascii', 'replace'), item.title.encode('ascii', 'replace'), 
