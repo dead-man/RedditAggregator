@@ -1,5 +1,5 @@
-#{
-    "username" : "Amazon_Deals",
+{
+    "username" : "Amazon",
     "usr_mail" : "xelnyq@gmail.com",
     "posts_sort_by" : "score", 
     "posts_sort_order" : "dsc",
