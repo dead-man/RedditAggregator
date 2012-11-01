@@ -132,6 +132,7 @@ $(document).ready(function(){\n\
     });\n\
 });\n\
 </script>\n\
+<link rel=\"shortcut icon\" href=\"img/favicon.ico\" />\n\
 <link href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>\n"
 
         ####################fucked up beyond recognition CSS multiple table sorting fix####################

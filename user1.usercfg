@@ -6,9 +6,9 @@
     "ref_cat" : "top", 
     "ref_t" : "month", 
     "subject_tmpl" : "test",
-    "posts_per_sub" : 25 , 
+    "posts_per_sub" : 100 , 
     "time_frame" : 90000, 
-    "pp_treshold" : 0.2,
-    "subreddits" : [["amazonsales","dealsreddit"], ["fuckingphilosophy", "buyitforlife"]]
+    "pp_treshold" : 0,
+    "subreddits" : ["technology"]
     
 }
