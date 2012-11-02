@@ -9,11 +9,58 @@ class Template:
             self = "<img src=img/web2.png>"
 
         if type == "image":
-            type = "<img src=img/jpg.gif>"
+            self = "&nbsp;<img src=img/jpg.gif>"
         elif type == "video":
-            type = "<img src=img/youtube16.gif>"
+            self = "&nbsp;<img src=img/youtube16.gif>"
         else:
             type = ""
+
+
+        google = ["google", "gmail", "nexus", "android", "chrome"]
+        microsoft = ["windows", "surface", "microsoft", "hotmail"]
+        apple = ["apple", "iphone", "mac", "ipad", "ipod", "steve jobs"]
+        facebook = ["facebook", "zuckerberg"]
+        samsung = ["samsung"]
+        twitter = ["twitter", "tweet"]
+        tpb = ["tpb", "pirate", "torrent", "sopa", "piracy", "megaupload", "kim dotcom"]
+
+
+        for word in google:
+            if title.lower().find(word) != -1:
+                type += "<img src=img/google.gif>&nbsp;"
+                break
+
+        for word in microsoft:
+            if title.lower().find(word) != -1:
+                type += "<img src=img/microsoft.png>&nbsp;"
+                break
+
+        for word in apple:
+            if title.lower().find(word) != -1:
+                type += "<img src=img/apple.png>&nbsp;"
+                break
+
+        for word in facebook:
+            if title.lower().find(word) != -1:
+                type += "<img src=img/facebook.png>&nbsp;"
+                break
+
+        for word in samsung:
+            if title.lower().find(word) != -1:
+                type += "<img src=img/samsung.png>&nbsp;"
+                break
+
+        for word in twitter:
+            if title.lower().find(word) != -1:
+                type += "<img src=img/twitter.jpg>&nbsp;"
+                break
+
+        for word in tpb:
+            if title.lower().find(word) != -1:
+                type += "<img src=img/tpb.png>&nbsp;"
+                break
+
+
 
         item = "<tr><td style=\"width:60%\"><a href={0} target=\"_blank\">{1} {2} {3}</a></td><td><a href={4} target=\"_blank\">{5}</a></td><td>{6}</td><td>{7}</td><td>{8}</td><td>{9}</td></tr>\n".format(
             url, self, title, type, permalink, num_comments, score, post_power, hours_ago, subreddit)

@@ -3,7 +3,7 @@
     "usr_mail" : "xelnyq@gmail.com",
     "posts_sort_by" : "score", 
     "posts_sort_order" : "dsc",
-    "posts_per_sub" : 25 , 
+    "posts_per_sub" : 250 , 
     "pp_treshold" : 0,
     "domain_filter" : "reddit.com",
     "time_frame" : 100000, 

@@ -408,8 +408,10 @@ def build_html(value, html, user):
         for name, posts in subreddit.iteritems():
             tit=' | '.join(name.title().split(';'))
             if tit.__len__() > 150:
+                tit2=tit
+                tit3=tit
                 tit=tit[0:150]
-                tit+="..."
+                tit+="&nbsp;<img src=img/questionmark.gif alt='{}' title='{}'>".format(tit2, tit3)
             output+= html.tablestart(tit, num)
             for item in posts:
                 output+= html.item(item.url.encode('ascii', 'replace'), item.title.encode('ascii', 'replace'), 

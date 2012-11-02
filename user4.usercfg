@@ -5,7 +5,7 @@
     "posts_sort_order" : "dsc",
     "ref_cat" : "top", 
     "ref_t" : "month", 
-    "posts_per_sub" : 25, 
+    "posts_per_sub" : 250, 
     "time_frame" : 100000, 
     "reverse_domain_filter" : "amazon.com",
     "pp_treshold" : 0,
