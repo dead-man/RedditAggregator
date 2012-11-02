@@ -15,7 +15,7 @@ class Template:
         else:
             type = ""
 
-        item = "<tr><td style=\"width:60%\"><a href={0}>{1} {2} {3}</a></td><td><a href={4}>{5}</a></td><td>{6}</td><td>{7}</td><td>{8}</td><td>{9}</td></tr>\n".format(
+        item = "<tr><td style=\"width:60%\"><a href={0} target=\"_blank\">{1} {2} {3}</a></td><td><a href={4} target=\"_blank\">{5}</a></td><td>{6}</td><td>{7}</td><td>{8}</td><td>{9}</td></tr>\n".format(
             url, self, title, type, permalink, num_comments, score, post_power, hours_ago, subreddit)
 
         return item
@@ -180,6 +180,6 @@ $(document).ready(function(){\n\
                 head += "<li><a href=#tab{0}>{1}</a></li>\n".format(i, j)
 
         head += "</ul></div>"
-        head += "<p align=right style=\"font-family: 'Ubuntu', sans-serif; position:absolute; top:-10px; right:20px;\">{}</p>".format(datetime.datetime.now().strftime("%A, %d/%m/%y"))
+        head += "<p align=right style=\"font-family: 'Ubuntu', sans-serif; position:absolute; top:-10px; right:20px;\">{}</p>".format(datetime.datetime.now().strftime("%A, <date>%d/%m/%Y</date>"))
 
         return head

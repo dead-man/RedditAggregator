@@ -3,11 +3,13 @@ import json
 import urllib2
 import time
 import smtplib
-import datetime
+from datetime import date, timedelta
+import shutil
 import math
 import sys
 import glob
 import this
+import os
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
@@ -404,7 +406,11 @@ def build_html(value, html, user):
     num=0
     for subreddit in value:
         for name, posts in subreddit.iteritems():
-            output+= html.tablestart(' | '.join(name.title().split(';')), num)
+            tit=' | '.join(name.title().split(';'))
+            if tit.__len__() > 150:
+                tit=tit[0:150]
+                tit+="..."
+            output+= html.tablestart(tit, num)
             for item in posts:
                 output+= html.item(item.url.encode('ascii', 'replace'), item.title.encode('ascii', 'replace'), 
                     item.permalink.encode('ascii', 'replace'), item.num_comments, item.score, 
@@ -426,9 +432,16 @@ def main():
         value = RedditLoader.aggregate_subreddits(user = user)
         
         output = build_html(value, html, user)
-        #output = output.decode("utf-8")
-        #output = output.encode("utf-8")
-        f = open(user.username + '.html', 'w+')
+
+
+        if os.path.exists('public/' + user.username + '.html')==True:
+
+            filedate = time.strftime("%m-%d-%Y",time.localtime(os.path.getmtime('public/' + user.username +'.html')))
+
+            shutil.move('public/' + user.username +'.html', 'public/archive/' + user.username + '-' + filedate + '.html')
+
+
+        f = open('public/' + user.username + '.html', 'w+')
         f.write(output)
         f.close()
 
