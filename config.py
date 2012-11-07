@@ -5,6 +5,8 @@ user_agent = 'PrivateRedditAggregatorBot/1.0'
 
 default_request_delay = 2 
 default_cache_refresh_interval = 300
+cache_entry_limit = default_cache_refresh_interval / default_request_delay  # Simple way to avoid memory exhaustion i.e. MemoryError
+cache_entries_to_clear = 20 # When cache_entry_limit is reached this many entries will be deleted
 
 max_retries = 20
 retry_delay_multiplier = 1.5

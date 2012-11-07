@@ -1,6 +1,6 @@
 
 import json
-import urllib2
+import urllib2, httplib
 import time
 import smtplib
 from datetime import date, timedelta
@@ -141,12 +141,7 @@ class RedditLoader:
     reddit_cache = {}
 
     @classmethod
-    def load_json_from_url(cls, url, delay = cfg.default_request_delay, cache_refresh_interval = cfg.default_cache_refresh_interval):
-
-        if url in cls.reddit_cache and time.time() - cls.reddit_cache[url]['last_refresh'] < cache_refresh_interval:
-            logging.info('Url ' + url + ' arleady in cache, NOT REQUESTING')
-            return cls.reddit_cache[url]['posts']
-
+    def get_url(cls, url, delay = 0):
         time_elapsed_since_last_req = time.time() - cls.last_req_time
         time_required = delay
         if (time_elapsed_since_last_req < time_required):
@@ -155,6 +150,7 @@ class RedditLoader:
         logging.info('Requesting url {}'.format(url))
         cls.last_req_time = time.time()
 
+
         try:
             response = cls.opener.open(url)
         except urllib2.HTTPError as error:
@@ -162,6 +158,9 @@ class RedditLoader:
             json_dct = {}
         except urllib2.URLError as error: 
             logging.error('Request failed to reach a server. Reason: {}'.format(error.reason))
+            json_dct = {}
+        except httplib.IncompleteRead as error: 
+            logging.error('Request failed, httplib.IncompleteRead encounterd. Reason: {}'.format(error.reason))
             json_dct = {}
         except:
             logging.error('Unexpected error from urllib2:', sys.exc_info()[0])
@@ -172,21 +171,61 @@ class RedditLoader:
             logging.debug('Message recieved: {}'.format(json_message))
             json_dct = json.loads(json_message)
 
+        return json_dct
+
+    @classmethod
+    def load_json_from_url(cls, url, delay = cfg.default_request_delay, cache_refresh_interval = cfg.default_cache_refresh_interval):
+
+        if cls.is_cached(url, cache_refresh_interval):
+            logging.info('Url ' + url + ' arleady in cache, NOT REQUESTING')
+            return cls.get_cache(url)
+
+        json_dct = cls.get_url(url, delay)
+
         if 'data' in json_dct and 'children' in json_dct['data']:
             cls.retries = 0
-            if url not in cls.reddit_cache: 
-                cls.reddit_cache[url] = {}
-            cls.reddit_cache[url]['last_refresh'] = time.time()
-            cls.reddit_cache[url]['posts'] = json_dct['data']['children']
+            cls.set_cache(url, json_dct['data']['children'])
             return json_dct['data']['children']
+
         elif cls.retries >= cfg.max_retries:
             logging.error('max_retries exceeded... exiting')
             sys.exit(1)
+
         else:
             logging.info('Response cointained no posts: {}'.format(json_dct))
             cls.retries += 1
             logging.warning('Retrying last request.... retry count: {}'.format(cls.retries))
             return cls.load_json_from_url(url, delay = delay * cfg.retry_delay_multiplier, cache_refresh_interval = cache_refresh_interval)
+
+    @classmethod
+    def is_cached(cls, url, refresh_time = cfg.default_cache_refresh_interval):
+        return url in cls.reddit_cache and time.time() - cls.reddit_cache[url]['last_refresh'] < refresh_time
+
+    @classmethod
+    def get_cache(cls, url):
+        return cls.reddit_cache[url]['posts']
+
+    @classmethod
+    def set_cache(cls, url, data, entry_limit = cfg.cache_entry_limit):
+        if len(cls.reddit_cache) + 1 >= entry_limit:
+            logging.info("Cache entry limit reached, making free space...")
+            cls._del_cache_entries(no_oldest = len(cls.reddit_cache) + 1 - entry_limit + cfg.cache_entries_to_clear)
+        if url not in cls.reddit_cache: 
+                cls.reddit_cache[url] = {}
+                cls.reddit_cache[url]['last_refresh'] = time.time()
+                cls.reddit_cache[url]['posts'] = data
+
+    @classmethod
+    def _del_cache_entries(cls, no_oldest = cfg.cache_entries_to_clear):
+        logging.info("Deleting {} oldest entr(y/ies) from cache".format(no_oldest))
+
+        for url in sorted(cls.reddit_cache.keys(), key = lambda k: cls.reddit_cache[k]['last_refresh']):
+            if no_oldest <= 0: break
+            logging.debug('Deleting cache entry for url: {}'.format(url))
+            del cls.reddit_cache[url]
+            no_oldest -= 1
+
+
 
     @classmethod
     def build_url(cls, subreddit, site = '', t = '', after = ''):
