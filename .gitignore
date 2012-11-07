@@ -1,4 +1,6 @@
-public/*
+public/archive/*
+public/*.html
+public/*.htm
 *.log
 
 #################
