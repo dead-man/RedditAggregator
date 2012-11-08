@@ -1,0 +1,13 @@
+{
+    "username" : "Amazon",
+    "usr_mail" : "xelnyq@gmail.com",
+    "posts_sort_by" : "score", 
+    "posts_sort_order" : "dsc",
+    "ref_cat" : "top", 
+    "ref_t" : "month", 
+    "posts_per_sub" : 250, 
+    "time_frame" : 100000, 
+    "reverse_domain_filter" : "amazon.com",
+    "pp_treshold" : 0,
+    "subreddits" : [["dealsreddit", "buyitforlife", "shutupandtakemymoney", "gadgets", "knives", "edc", "flashlight", "technology", "gameoffers", "buildapcsales", "gamedeals", "amazondeals", "animedeals", "dealhunters", "deals", "redditdeals", "amazonprime", "primefreebies", "bestofamazonprime", "malefashionadvice", "amazonsales", "cameras", "fratdeals", "photography", "manga", "anime", "books", "booksuggestions", "bookshelf", "goodreads", "ebooks", "bookdownloads", "bookclub", "animenews", "bookcollecting", "comics", "comicbooks", "dvdcollection", "gamingsuggestions", "asianfilms", "flicks", "foreignmovies", "movies", "moviesuggestions", "gamemusic", "gameoffers", "indiecinema", "geek", "tvcritic", "truefilm", "animation", "britishtv", "documentaries", "film", "music", "movieclub", "moviecritic", "moviemusic", "frugalmalefashion", "gifts", "audio", "headphones", "audiophile", "hometheater", "carav", "vintageaudio", "wicked_edge", "fountainpens", "goodvalue", "frugal", "tablets", "android", "ereaders", "audiobooks", "suggestalaptop", "hardware", "gamingpc", "airsoft", "cheapshark", "ebookdeals", "fitnessdeals", "ketodeals", "pcgaming", "gaming", "patientgamers", "redditsuggest", "shaveoftheday", "wicked_edge_deals", "shave_bazaar", "skincareaddiction", "Science", "madeincanada", "minimalism", "simpleliving", "lifehacks", "LifeProTips", "literature"]]
+}

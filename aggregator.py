@@ -479,6 +479,9 @@ def main():
 
             filedate = time.strftime("%m-%d-%Y",time.localtime(os.path.getmtime('public/' + user.username +'.html')))
 
+            if not os.path.exists('public/archive/'):
+                os.makedirs('public/archive/')
+
             shutil.move('public/' + user.username +'.html', 'public/archive/' + user.username + '-' + filedate + '.html')
 
 
