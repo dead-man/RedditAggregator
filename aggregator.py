@@ -153,6 +153,8 @@ class RedditLoader:
 
         try:
             response = cls.opener.open(url)
+            logging.info('Site responded with HTTP code: {}'.format(response.code))
+            json_message = response.read()
         except urllib2.HTTPError as error:
             logging.error('Site responded with unhandled HTTP error code: {}'.format(error.code))
             json_dct = {}
@@ -166,8 +168,6 @@ class RedditLoader:
             logging.error('Unexpected error from urllib2:', sys.exc_info()[0])
             raise
         else:
-            logging.info('Site responded with HTTP code: {}'.format(response.code))
-            json_message = response.read()
             logging.debug('Message recieved: {}'.format(json_message))
             json_dct = json.loads(json_message)
 
