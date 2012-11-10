@@ -471,35 +471,26 @@ def main():
         logging.info('###################### Started processing user: {}'.format(user.username))
         
         value = RedditLoader.aggregate_subreddits(user = user)
-        
         output = build_html(value, html, user)
 
         if not os.path.exists('public/archive/'):
             os.makedirs('public/archive/')
 
         if os.path.exists('public/' + user.username + '.html')==True:
-
             filedate = time.strftime("%m-%d-%Y",time.localtime(os.path.getmtime('public/' + user.username +'.html')))
-
             shutil.move('public/' + user.username +'.html', 'public/archive/' + user.username + '-' + filedate + '.html')
 
-
+############### CIEPIEL'S temporary testing code        ########################################################
         if os.path.exists('public/hn.html')==True:
-
             filedate = time.strftime("%m-%d-%Y",time.localtime(os.path.getmtime('public/hn.html')))
-
             shutil.move('public/hn.html', 'public/archive/HackerNews-' + filedate + '.html')
-
-
+################################################################################################################
 
         f = open('public/' + user.username + '.html', 'w+')
         f.write(output)
         f.close()
 
         #mail(user.usr_mail, user.subject_tmpl.format(date = datetime.datetime.now().strftime("%d-%m-%Y")), output, user.gmail_login_user, user.gmail_login_pwd)
-       
-
-
 
 if __name__ == "__main__":
     cfg.logging_config['level'] = getattr(logging, cfg.logging_config['level'].upper())
@@ -510,7 +501,6 @@ if __name__ == "__main__":
     formatter = logging.Formatter(cfg.logging_config['format'])
     console.setFormatter(formatter)
     logging.getLogger('').addHandler(console)
-
 
     logging.info('########################## Application started')
     main()

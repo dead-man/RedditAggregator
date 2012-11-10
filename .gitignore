@@ -2,7 +2,6 @@ public/archive/*
 public/*.html
 public/*.htm
 *.log
-!index.html
 !ciepiel.html
 
 #################
