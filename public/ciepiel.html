@@ -1,0 +1,137 @@
+<html>
+
+<head>
+<style type="text/css">
+a {text-decoration:none}
+table.tablesorter thead tr .header {background-image: url(img/bg.gif);background-repeat: no-repeat;background-position: center right;cursor: pointer;}
+table.tablesorter thead tr .headerSortUp {background-image: url(img/asc.gif);}
+table.tablesorter thead tr .headerSortDown {background-image: url(img/desc.gif);}
+#tabs_wrapper {
+    width: 422px;
+}
+#tabs_container {
+    border-bottom: 1px solid #eee;
+}
+#tabs {
+    list-style: none;
+    padding: 5px 0 4px 0;
+    margin: 0 0 0 10px;
+    font: 1em verdana;
+}
+#tabs li {
+    display: inline;
+}
+#tabs li a {
+    border: 1px solid #aaa;
+    padding: 4px 6px;
+    text-decoration: none;
+    background-color: #ddd;
+    border-bottom: none;
+    outline: none;
+    border-radius: 5px 5px 0 0;
+    -moz-border-radius: 5px 5px 0 0;
+    -webkit-border-top-left-radius: 5px;
+    -webkit-border-top-right-radius: 5px;
+}
+#tabs li a:hover {
+    background-color: #eee;
+    padding: 4px 6px;
+}
+#tabs li.active a {
+    border-bottom: 1px solid #fff;
+    background-color: #fff;
+    padding: 4px 6px 5px 6px;
+    border-bottom: none;
+}
+#tabs li.active a:hover {
+    background-color: #eeeeee;
+    padding: 4px 6px 5px 6px;
+    border-bottom: none;
+}
+#tabs li a.icon_accept {
+    background-image: url(accept.png);
+    background-position: 5px;
+    background-repeat: no-repeat;
+    padding-left: 24px;
+}
+#tabs li a.icon_accept:hover {
+    padding-left: 24px;
+}
+#tabs_content_container {
+    border: 1px solid #ccc;
+    border-top: none;
+    padding: 10px;
+    width: 400px;
+}
+.tab_content {
+    display: none;
+}
+</style>
+<script type="text/javascript" src="js/jquery-latest.js"></script> 
+<script type="text/javascript" src="js/jquery.tablesorter.js"></script>
+<script>
+$(document).ready(function(){
+    $("#tabs li").click(function() {
+        $("#tabs li").removeClass('active');
+        $(this).addClass("active");
+        $(".tab_content").hide();
+        var selected_tab = $(this).find("a").attr("href");
+        $(selected_tab).fadeIn();
+        return false;
+    });
+});
+</script>
+<link rel="shortcut icon" href="img/favicon.ico" />
+
+</head>
+
+<body style="overflow:hidden;">
+<div id="tabs_container">
+    <ul id="tabs">
+        <li class="active"><a href="#tab0">All</a></li>
+        <li><a href="#tab1">Tech News</a></li>
+        <li><a href="#tab2">Good Reads</a></li>
+        <li><a href="#tab3">Amazon Deals</a></li>
+        <li><a href="#tab4">Daring Fireball</a></li>
+        <li><a href="#tab5">BHW VIP</a></li>
+        <li><a href="#tab6">BBHF VIP</a></li>
+        <li><a href="#tab7">Hacker News</a></li>
+    </ul>
+    </div>
+
+<div id="tab0" class="tab_content" style="display:block; ">
+<object data="All.html" type="text/html" width="100%" height="100%"></object>
+</div>
+
+<div id="tab1" class="tab_content" style="display:block; ">
+<object data="Tech.html" type="text/html" width="100%" height="100%"></object>
+</div>
+
+<div id="tab2" class="tab_content" style="display:block; ">
+<object data="Reads.html" type="text/html" width="100%" height="100%"></object>
+</div>
+
+<div id="tab3" class="tab_content" style="display:block; ">
+<object data="Amazon.html" type="text/html" width="100%" height="100%"></object>
+</div>
+
+<div id="tab4" class="tab_content" style="display:block; ">
+<object type="text/html" data="http://daringfireball.net/" height="100%" width="100%"></object>
+</div>
+
+<div id="tab5" class="tab_content" style="display:block; ">
+<object type="text/html" data="http://www.blackhatworld.com/blackhat-seo/f54-junior-vip-zone/" height="100%" width="100%"></object>
+</div>
+
+<div id="tab6" class="tab_content" style="display:block; ">
+<object type="text/html" data="http://bestblackhatforum.com/Forum-VIP-s-Earn-Money-Online-Offline-GB-SEO-Discussion-Method-Tutorial-Trick-etc" height="100%" width="100%"></object>
+</div>
+
+<div id="tab7" class="tab_content" style="display:block; ">
+<object type="text/html" data="public/hn.html" height="100%" width="100%"></object>
+</div>
+
+
+</body>
+
+</html>

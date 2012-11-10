@@ -474,15 +474,22 @@ def main():
         
         output = build_html(value, html, user)
 
+        if not os.path.exists('public/archive/'):
+            os.makedirs('public/archive/')
 
         if os.path.exists('public/' + user.username + '.html')==True:
 
             filedate = time.strftime("%m-%d-%Y",time.localtime(os.path.getmtime('public/' + user.username +'.html')))
 
-            if not os.path.exists('public/archive/'):
-                os.makedirs('public/archive/')
-
             shutil.move('public/' + user.username +'.html', 'public/archive/' + user.username + '-' + filedate + '.html')
+
+
+        if os.path.exists('public/hn.html')==True:
+
+            filedate = time.strftime("%m-%d-%Y",time.localtime(os.path.getmtime('public/hn.html')))
+
+            shutil.move('public/hn.html', 'public/archive/HackerNews-' + filedate + '.html')
+
 
 
         f = open('public/' + user.username + '.html', 'w+')
