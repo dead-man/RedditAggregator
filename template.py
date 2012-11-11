@@ -15,56 +15,24 @@ class Template:
         else:
             type = ""
 
+        keywords = [["google.gif", "google", "gmail", "nexus", "android", "chrome"],
+["microsoft.png", "microsoft", "windows", "surface", "hotmail"],
+["apple.png", "apple", "iphone", "mac", "ipad", "ipod", "steve jobs"],
+["facebook.png", "facebook", "zuckerberg"],
+["samsung.png", "samsung"],
+["twitter.jpg", "twitter", "tweet"],
+["tpb.png", "tpb", "pirate", "torrent", "sopa", "piracy", "megaupload", "kim dotcom"],
+["amazon.png", "amazon", "aws", "kindle", "turk"],
+["usa.png", "usa", "united states", "romney", "bush", "clinton", "obama", "iran", "israel"],
+["china.gif", "china", "chinese"]]
 
-        google = ["google", "gmail", "nexus", "android", "chrome"]
-        microsoft = ["windows", "surface", "microsoft", "hotmail"]
-        apple = ["apple", "iphone", "mac", "ipad", "ipod", "steve jobs"]
-        facebook = ["facebook", "zuckerberg"]
-        samsung = ["samsung"]
-        twitter = ["twitter", "tweet"]
-        tpb = ["tpb", "pirate", "torrent", "sopa", "piracy", "megaupload", "kim dotcom"]
-        amazon = ["amazon", "aws", "kindle", "turk"]
 
+        for (i, group) in enumerate(keywords):
+                for word in group:
+                    if title.lower().find(word) != -1:
+                        type += "<img src=img/{}>&nbsp;".format(keywords[i][0])
+                        break
 
-        for word in google:
-            if title.lower().find(word) != -1:
-                type += "<img src=img/google.gif>&nbsp;"
-                break
-
-        for word in microsoft:
-            if title.lower().find(word) != -1:
-                type += "<img src=img/microsoft.png>&nbsp;"
-                break
-
-        for word in apple:
-            if title.lower().find(word) != -1:
-                type += "<img src=img/apple.png>&nbsp;"
-                break
-
-        for word in facebook:
-            if title.lower().find(word) != -1:
-                type += "<img src=img/facebook.png>&nbsp;"
-                break
-
-        for word in samsung:
-            if title.lower().find(word) != -1:
-                type += "<img src=img/samsung.png>&nbsp;"
-                break
-
-        for word in twitter:
-            if title.lower().find(word) != -1:
-                type += "<img src=img/twitter.jpg>&nbsp;"
-                break
-
-        for word in tpb:
-            if title.lower().find(word) != -1:
-                type += "<img src=img/tpb.png>&nbsp;"
-                break
-
-        for word in amazon:
-            if title.lower().find(word) != -1:
-                type += "<img src=img/amazon.png>&nbsp;"
-                break
 
 
 
