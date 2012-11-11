@@ -31,7 +31,7 @@ class RedditOpener:
 class RedditPost:
     ref_score = {}
 
-    def __init__(self, pp_alg = cfg.default_user_cfg['pp_alg'], **data ):
+    def __init__(self, ref_subreddit = None, pp_alg = cfg.default_user_cfg['pp_alg'], **data ):
 
         self.subreddit = data['subreddit']
         self.id = data['id']
@@ -52,14 +52,19 @@ class RedditPost:
         self._tp = None
         self.hours_ago_int = int(math.ceil((self.time_of_download - self.created_utc) / 3600))
 
+        if ref_subreddit == None:
+            self.ref_subreddit = self.subreddit
+        else:
+            self.ref_subreddit = ref_subreddit
+
 
     def __str__(self):
         return u'title: {} - score: {} - posted: {} hours ago - post_power: {}'.format(self.title, 
             self.score + self.num_comments, (time.time() - self.created_utc) / 3600, self.post_power()).encode("utf-8")
 
     @classmethod
-    def load_posts(cls, posts_json, pp_alg = cfg.default_user_cfg['pp_alg']):
-        return [RedditPost(pp_alg = pp_alg, **post['data']) for post in posts_json ]
+    def load_posts(cls, posts_json, ref_subreddit = None, pp_alg = cfg.default_user_cfg['pp_alg']):
+        return [RedditPost(pp_alg = pp_alg, ref_subreddit = ref_subreddit, **post['data']) for post in posts_json ]
 
     @classmethod
     def calculate_ref_score(cls, reddit_posts, subreddit = '', pp_alg = cfg.default_user_cfg['pp_alg']):
@@ -87,7 +92,7 @@ class RedditPost:
         return ref_score
 
     def post_power(self):
-        if self.subreddit not in self.ref_score:
+        if self.ref_subreddit not in self.ref_score:
             raise RuntimeError('Invalid state: call calculate_ref_score() BEFORE post_power()')
         if self._pp != None: return self._pp
 
@@ -102,7 +107,7 @@ class RedditPost:
     def _post_power_default(self):
         ago = (time.time() - self.created_utc) / 3600
         postscore = self.score + self.num_comments
-        pp = (25 / ago * postscore / self.ref_score[self.subreddit][self.pp_alg])
+        pp = (25 / ago * postscore / self.ref_score[self.ref_subreddit][self.pp_alg])
 
 
         return pp
@@ -259,14 +264,14 @@ class RedditLoader:
         posts = cls.load_json_from_url(cls.build_url(subreddit, site = suffix, t = t))
         loaded = len(posts)
         if loaded < cfg.posts_in_json_page : 
-            return RedditPost.load_posts(posts, pp_alg = pp_alg)
+            return RedditPost.load_posts(posts, pp_alg = pp_alg, ref_subreddit = subreddit)
         else:
             while len(posts) >= cfg.posts_in_json_page and len(posts) < post_no and loaded > 0:
                  last_post_id = posts[-1]['data']['name']
                  next_site = cls.load_json_from_url(cls.build_url(subreddit, site = suffix, t = t, after = last_post_id))
                  loaded = len(next_site)
                  posts += next_site
-            return RedditPost.load_posts(posts[:post_no], pp_alg = pp_alg)
+            return RedditPost.load_posts(posts[:post_no], pp_alg = pp_alg, ref_subreddit = subreddit)
 
     @classmethod
     def aggregate_subreddits(cls, reddit_list = [], user = None, ref_cat = cfg.default_user_cfg['ref_cat'], 
@@ -306,7 +311,7 @@ class RedditLoader:
 
             for subreddit in grouplist:
                 top_posts = RedditLoader.load_subreddit(subreddit, ref_cat, ref_t)
-                RedditPost.calculate_ref_score(top_posts)
+                RedditPost.calculate_ref_score(top_posts, subreddit = subreddit)
                 posts = RedditLoader.load_subreddit(subreddit, post_no = posts_per_sub)
 
                 for item in posts:
