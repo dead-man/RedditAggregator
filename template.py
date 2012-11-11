@@ -23,6 +23,7 @@ class Template:
         samsung = ["samsung"]
         twitter = ["twitter", "tweet"]
         tpb = ["tpb", "pirate", "torrent", "sopa", "piracy", "megaupload", "kim dotcom"]
+        amazon = ["amazon", "aws", "kindle", "turk"]
 
 
         for word in google:
@@ -58,6 +59,11 @@ class Template:
         for word in tpb:
             if title.lower().find(word) != -1:
                 type += "<img src=img/tpb.png>&nbsp;"
+                break
+
+        for word in amazon:
+            if title.lower().find(word) != -1:
+                type += "<img src=img/amazon.png>&nbsp;"
                 break
 
 
@@ -98,8 +104,9 @@ class Template:
     def head(cls, tabs, subnames):
 
         import datetime
+        from time import gmtime, strftime
 
-        head = "<head><style type=\"text/css\">\n\
+        head = "<head><title>Reddit Aggregator</title><style type=\"text/css\">\n\
 a {text-decoration:none}\n\
 table.tablesorter thead tr .header {background-image: url(img/bg.gif);background-repeat: no-repeat;background-position: center right;cursor: pointer;}\n\
 table.tablesorter thead tr .headerSortUp {background-image: url(img/asc.gif);}\n\
@@ -227,6 +234,6 @@ $(document).ready(function(){\n\
                 head += "<li><a href=#tab{0}>{1}</a></li>\n".format(i, j)
 
         head += "</ul></div>"
-        head += "<p align=right style=\"font-family: 'Ubuntu', sans-serif; position:absolute; top:-10px; right:20px;\">{}</p>".format(datetime.datetime.now().strftime("%A, <date>%d/%m/%Y</date>"))
+        head += "<p align=right style=\"font-family: 'Ubuntu', sans-serif; position:absolute; top:-10px; right:20px;\">{}</p>".format(datetime.datetime.now().strftime("%A, <date>%d/%m/%Y</date>, %H:%M"))
 
         return head

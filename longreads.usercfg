@@ -19,9 +19,10 @@
         ["askscience", "explainlikeimfive", "science", "TrueAskReddit",  "RedditThroughHistory"], 
         ["lifehacks", "LifeProTips", "todayilearned"], 
         ["books", "booksuggestions", "literature"], 
-        ["politics", "NeutralPolitics", "worldevents", "worldnews", "worldpolitics", "news", "moderatepolitics", "offbeat"], 
+        ["politics", "NeutralPolitics", "worldevents", "worldnews", "worldpolitics", "news", "moderatepolitics", "offbeat", "anarchism"], 
         ["psychology", "cogsci", "cognitivelinguistics", "neuro", "Neuropsychology"], 
-        ["classicalmusic"],
+        ["classicalmusic", "listentous", "listentothis"],
+        ["truefilm", "movieclub", "moviecritic"],
         ["poland", "Polska"], 
         ["blog", "announcements"],
         ["android", "nexus7", "androidapps", "androidgaming", "nexus"]]

@@ -1,0 +1,11 @@
+{
+    "username" : "All",
+    "usr_mail" : "xelnyq@gmail.com",
+    "posts_sort_by" : "score", 
+    "posts_sort_order" : "dsc",
+    "posts_per_sub" : 250, 
+    "pp_treshold" : 0,
+    "time_frame" : 100000, 
+    "subreddits" : 
+        [["all"]]
+}

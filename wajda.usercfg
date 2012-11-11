@@ -9,6 +9,6 @@
     "posts_per_sub" : 25 , 
     "time_frame" : 90000, 
     "pp_treshold" : 0,
-    "subreddits" : ["technology", "startups", "entrepreneur", "business"]
+    "subreddits" : ["technology", "startups"]
     
 }

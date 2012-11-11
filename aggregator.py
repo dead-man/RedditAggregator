@@ -68,6 +68,7 @@ class RedditPost:
 
     @classmethod
     def calculate_ref_score(cls, reddit_posts, subreddit = '', pp_alg = cfg.default_user_cfg['pp_alg']):
+
         if len(reddit_posts) > 0:
             if subreddit == '':
                 subreddit = reddit_posts[0].subreddit
@@ -92,6 +93,7 @@ class RedditPost:
         return ref_score
 
     def post_power(self):
+
         if self.ref_subreddit not in self.ref_score:
             raise RuntimeError('Invalid state: call calculate_ref_score() BEFORE post_power()')
         if self._pp != None: return self._pp
@@ -167,7 +169,7 @@ class RedditLoader:
             logging.error('Request failed to reach a server. Reason: {}'.format(error.reason))
             json_dct = {}
         except httplib.IncompleteRead as error: 
-            logging.error('Request failed, httplib.IncompleteRead encounterd. Reason: {}'.format(error.reason))
+            logging.error('Request failed, httplib.IncompleteRead encounterd. Reason: {}'.format(error))
             json_dct = {}
         except:
             logging.error('Unexpected error from urllib2:', sys.exc_info()[0])
