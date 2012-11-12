@@ -202,6 +202,6 @@ $(document).ready(function(){\n\
                 head += "<li><a href=#tab{0}>{1}</a></li>\n".format(i, j)
 
         head += "</ul></div>"
-        head += "<p align=right style=\"font-family: 'Ubuntu', sans-serif; position:absolute; top:-10px; right:20px;\">{}</p>".format(datetime.datetime.now().strftime("%A, <date>%d/%m/%Y</date>, %H:%M"))
+        head += "<p align=right style=\"font-family: 'Ubuntu', sans-serif; position:absolute; top:-10px; right:20px;\">{}</p>".format(datetime.datetime.now().strftime("%A, <date>%d/%m/%Y</date>, {}:%M").format(int(datetime.datetime.now().strftime("%H"))-3))
 
         return head

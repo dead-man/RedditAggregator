@@ -8,7 +8,6 @@ import shutil
 import math
 import sys
 import glob
-import this
 import os
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
@@ -490,7 +489,7 @@ def main():
 ############### CIEPIEL'S temporary testing code        ########################################################
         if os.path.exists('public/hn.html')==True:
             filedate = time.strftime("%m-%d-%Y",time.localtime(os.path.getmtime('public/hn.html')))
-            shutil.move('public/hn.html', 'public/archive/HackerNews-' + filedate + '.html')
+            shutil.copy('public/hn.html', 'public/archive/HackerNews-' + filedate + '.html')
 ################################################################################################################
 
         f = open('public/' + user.username + '.html', 'w+')
