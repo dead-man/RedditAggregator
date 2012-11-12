@@ -21,10 +21,17 @@ class Template:
 ["facebook.png", "facebook", "zuckerberg"],
 ["samsung.png", "samsung"],
 ["twitter.jpg", "twitter", "tweet"],
-["tpb.png", "tpb", "pirate", "torrent", "sopa", "piracy", "megaupload", "kim dotcom"],
+["tpb.png", "tpb", "pirate", "torrent", "sopa", "piracy", "megaupload", "kim dotcom", "drm", "privacy"],
 ["amazon.png", "amazon", "aws", "kindle", "turk"],
-["usa.png", "usa", "united states", "romney", "bush", "clinton", "obama", "iran", "israel"],
-["china.gif", "china", "chinese"]]
+["usa.png", "usa", "united states", "romney", "bush", "clinton", "obama", "iran", "israel", "republican", "democrat", "nixon", "roosevelt", "eisenhower", "reagan"],
+["china.gif", "china", "chinese", "foxconn"],
+["marijuana.gif", "marijuana", "drug", "marihuana", "weed", "trees"],
+["religion.gif", "religion", "vatican", "church", "atheism", "antitheism", "god", "jesus", "allah", "islam", "yahwe", "muhammad", "hell", "heaven", "bigot", "catholic", "christian", "sagan", "hitchen", "dawkins", "child abuse", "preacher"],
+["money.png", "crysis", "fed", "recession", "austerity", "bail", "unemploy", "economy", "loan", "debt"],
+["politics.png", "climate", "environment", "rights", "warming", "marriage", "abortion", "contraception", "prolife", "prochoice", "pro-life", "pro-choice", "healthcare"],
+["rainbow.png", "gay", "homo", "rape", "equality", "lgbt", "trans"],
+["cat.png", "cat", "pussy", "kitten"],
+["dog.gif", "dog", "pup"]]
 
 
         for (i, group) in enumerate(keywords):
