@@ -1,0 +1,245 @@
+
+*ALL
+	all
+
+*MAIN
+
+	**PSYCH
+		psychology
+		cogsci
+		neuro
+		neurophilosophy
+		cognitivelinguistics
+		mathpsych
+		Nootropics
+
+	**PHILO
+		atheism
+		StrongAtheism
+		philosophy
+		PhilosophyofScience
+		skeptic
+		nihilism
+
+	**IT
+		compsci
+		technology
+
+	**NET
+		networking
+		ccda
+		ccnp
+		netsec
+		SocialEngineering
+		computerforensics
+
+	**PROG
+		programming
+		learnpython
+
+	**MOVIES
+		movies
+		MovieSuggestions
+		CultCinema
+		movieclub
+		MoviePosterPorn
+
+	**BOOKS
+		books
+		booksuggestions
+
+	**READS
+		bestof
+		tldr
+		TrueReddit
+		TrueTrueReddit
+		Foodforthought
+		DepthHub
+
+	**GUITAR
+		Guitar
+		guitarlessons
+		Tabs
+
+	**FOOD
+		food
+		redditcookbook
+		eatsandwiches
+		grilledcheese
+		Pizza
+
+	**AVIATION
+		aviation
+		flightsim
+		VATSIM
+
+	**SPORTS
+		golf
+		scuba
+		bicycling
+
+	**OTHER
+		lockpicking
+		poker
+		hookah
+		starcraft
+		community
+
+	**MUSIC
+		Music
+		classicalmusic
+		MotivatedMusic
+		MusicForConcentration
+		SoundsVintage
+		groovesharkplaylists
+
+	**NEWS
+		worldnews
+		worldpolitics
+		poland
+		politics
+		theredditor
+		WikiLeaks
+		
+	**QUESTIONS
+		AskReddit
+		askscience
+		howto
+		InsightfulQuestions
+		TrueAskReddit
+		TMBR
+		explainlikeimfive
+		YouShouldKnow
+		todayilearned
+
+	**ALLSCI
+		science
+		physics
+		chemistry
+		biology
+		PhilosophyofScience
+		math
+		compsci
+		psychology
+		cogsci
+		neuro
+		socialscience
+		geography
+		geology
+		environmental_science
+		anthropology
+		entomology
+		askscience
+		hardscience
+		softscience
+		astronomy
+		technology
+		space
+		environment
+		sciencepolicy
+		bioinformatics
+		statistics
+		artificial
+		machinelearning
+
+
+*IMPROV
+	**GET_MOTIVATED
+		GetMotivated
+		productivity
+		ZenHabits
+		carpediem
+		ChallengeAccepted
+		GetOutOfBed
+		GiveMe40Days
+		kickassday
+
+	**SOC_SKILLS
+		socialskills
+		socialanxiety
+		seduction
+		makingfriends
+		Anxiety
+		aspergers
+		confidence
+		dating_advice
+		introvert
+
+	**LIFESTYLE
+		malefashionadvice
+		minimalism
+		manprovement
+
+	**FITNESS
+		Fitness
+		bodyweightfitness
+		loseit
+		keto
+		Paleo
+
+	**FINANCE
+		personalfinance
+		financialindependence
+		Frugal
+
+	**REST
+		LifeProTips
+		IWantToLearn
+		LearnUselessTalents
+		LucidDreaming
+		ProjectEnrichment
+		ProjectReddit
+		selfhelp
+		SomethingNew
+		NoFap
+		leaves
+
+
+
+*MISC
+	
+	**FUN
+		videos
+		funny
+		WTF
+		pics
+		iiiiiiitttttttttttt
+		talesfromtechsupport
+		firstworldproblems
+		RedditThroughHistory
+		AdviceAnimals
+		BugWars
+		entgaming
+		woahdude
+
+	**TO_WATCH
+		Documentaries
+		ted
+		tedtalks
+
+	**QUOTES
+		quotes
+		QuotesPorn
+
+	**REST
+		misc
+		IAmA
+		SomebodyMakeThis
+		lists
+		shutupandtakemymoney
+		BuyItForLife
+		blog
+		Marijuana
+		fuckingphilosophy
+		gaming
+		geek
+
+	**SELF
+		newreddits
+		subredditoftheday
+		findareddit
+		multi
+		multireddit
+		multisubs
+		redditlists
+		announcements
