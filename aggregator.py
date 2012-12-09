@@ -108,10 +108,9 @@ class RedditPost:
     def _post_power_default(self):
         ago = (time.time() - self.created_utc) / 3600
         postscore = self.score + self.num_comments
-        pp = (25 / (ago+1) * postscore / (self.ref_score[self.ref_subreddit][self.pp_alg]+0.01)
-
-
+        pp = (25 / (ago+1) * postscore / (self.ref_score[self.ref_subreddit][self.pp_alg]+0.01))
         return pp
+
 
     def hours_ago(self):
         if self._ha != None: return self._ha
