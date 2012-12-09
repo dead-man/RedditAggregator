@@ -1,0 +1,60 @@
+{
+    "username" : "wajda_improv",
+    "posts_sort_by" : "score", 
+    "posts_per_sub" : 100 , 
+    "time_frame" : 100000, 
+    "pp_treshold" : 0,
+    "subreddits" : [
+        [
+            "GetMotivated", 
+            "productivity", 
+            "ZenHabits", 
+            "carpediem", 
+            "ChallengeAccepted", 
+            "GetOutOfBed", 
+            "GiveMe40Days", 
+            "kickassday"
+        ], 
+        [
+            "socialskills", 
+            "socialanxiety", 
+            "seduction", 
+            "makingfriends", 
+            "Anxiety", 
+            "aspergers", 
+            "confidence", 
+            "dating_advice", 
+            "introvert"
+        ], 
+        [
+            "malefashionadvice", 
+            "minimalism", 
+            "manprovement"
+        ], 
+        [
+            "Fitness", 
+            "bodyweightfitness", 
+            "loseit", 
+            "keto", 
+            "Paleo"
+        ], 
+        [
+            "personalfinance", 
+            "financialindependence", 
+            "Frugal"
+        ], 
+        [
+            "LifeProTips", 
+            "IWantToLearn", 
+            "LearnUselessTalents", 
+            "LucidDreaming", 
+            "ProjectEnrichment", 
+            "ProjectReddit", 
+            "selfhelp", 
+            "SomethingNew", 
+            "NoFap", 
+            "leaves"
+        ]
+    ]
+    
+}

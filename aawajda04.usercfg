@@ -1,0 +1,55 @@
+{
+    "username" : "wajda_misc",
+    "posts_sort_by" : "score", 
+    "posts_per_sub" : 100 , 
+    "time_frame" : 100000, 
+    "pp_treshold" : 0,
+    "subreddits" : [
+        [
+            "videos", 
+            "funny", 
+            "WTF", 
+            "pics", 
+            "iiiiiiitttttttttttt", 
+            "talesfromtechsupport", 
+            "firstworldproblems", 
+            "RedditThroughHistory", 
+            "AdviceAnimals", 
+            "BugWars", 
+            "entgaming", 
+            "woahdude"
+        ], 
+        [
+            "Documentaries", 
+            "ted", 
+            "tedtalks"
+        ], 
+        [
+            "quotes", 
+            "QuotesPorn"
+        ], 
+        [
+            "misc", 
+            "IAmA", 
+            "SomebodyMakeThis", 
+            "lists", 
+            "shutupandtakemymoney", 
+            "BuyItForLife", 
+            "blog", 
+            "Marijuana", 
+            "fuckingphilosophy", 
+            "gaming", 
+            "geek"
+        ], 
+        [
+            "newreddits", 
+            "subredditoftheday", 
+            "findareddit", 
+            "multi", 
+            "multireddit", 
+            "multisubs", 
+            "redditlists", 
+            "announcements"
+        ]
+    ]
+}

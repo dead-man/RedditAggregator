@@ -4,6 +4,7 @@ public/*.htm
 *.log
 *.list
 !ciepiel.html
+!wajda.html
 
 #################
 ## Eclipse
