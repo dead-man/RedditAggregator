@@ -1,0 +1,14 @@
+{
+    "username" : "zosia",
+    "usr_mail" : "xelnyq@gmail.com",
+    "posts_sort_by" : "score", 
+    "posts_sort_order" : "dsc",
+    "ref_cat" : "top", 
+    "ref_t" : "month", 
+    "subject_tmpl" : "test",
+    "posts_per_sub" : 50 , 
+    "time_frame" : 100000, 
+    "pp_treshold" : 0,
+    "subreddits" : ["technology", "sex", "art", "trueart", "explainlikeimfive", "worldnews", "design", "bestof", "psychology"]
+    
+}
